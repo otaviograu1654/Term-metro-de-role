@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Area do Criador | Como Ta o Role?</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="role-header">
+      <form action="/logout" method="POST">
+        <button type="submit" class="text-button">Sair</button>
+      </form>
+      <p class="eyebrow">Area do criador</p>
+      <h1>Como Tá o Rolê?</h1>
+    </section>
+
+    <section class="card">
+      <form action="/roles" method="POST" class="stack">
+        <label for="nome">Nome do rolê</label>
+        <input id="nome" name="nome" type="text" maxlength="100" required placeholder="Ex: Sexta na casa da Ana">
+        <button type="submit" class="primary-button">Criar rolê</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <div>
+          <p class="eyebrow">Seus links</p>
+          <h2>Rolês criados</h2>
+        </div>
+      </div>
+      <% if (roles.length === 0) { %>
+        <p class="empty">Nenhum rolê criado ainda.</p>
+      <% } else { %>
+        <ul class="creator-list">
+          <% roles.forEach(function(role) { %>
+            <li>
+              <div>
+                <strong><%= role.nome %></strong>
+                <span><%= role.codigo %> · <%= role.participantes %> participantes · <%= role.avaliacoes %> avaliações</span>
+                <span><%= role.expirado ? 'Encerrado' : 'Encerra em ' + role.expiracao_label %></span>
+              </div>
+              <a class="small-link" href="/role/<%= role.codigo %>">Abrir</a>
+            </li>
+          <% }) %>
+        </ul>
+      <% } %>
+    </section>
+  </main>
+</body>
+</html>

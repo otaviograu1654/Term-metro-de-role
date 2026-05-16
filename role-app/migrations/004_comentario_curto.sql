@@ -1,0 +1,2 @@
+ALTER TABLE votos
+  ADD COLUMN IF NOT EXISTS comentario VARCHAR(30);

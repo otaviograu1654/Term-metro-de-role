@@ -21,18 +21,44 @@
         <input id="shareLink" type="text" value="<%= shareUrl %>" readonly>
         <button type="button" id="copyLinkButton" class="small-button">Copiar link</button>
       </div>
+      <p class="expires-text">Encerra em <%= expiration.expiresAtLabel %></p>
       <p id="copyFeedback" class="feedback" aria-live="polite"></p>
     </section>
 
-    <% if (!participante) { %>
+    <% if (typeof aviso !== 'undefined' && aviso) { %>
+      <section class="toast-card" role="status">
+        <p><%= aviso %></p>
+      </section>
+    <% } %>
+
+    <% if (expiration.isExpired) { %>
+      <section class="card expired-card">
+        <p class="eyebrow">Role encerrado</p>
+        <p>Este link ficou aberto por 24 horas e agora nao aceita novas entradas ou votos.</p>
+      </section>
+    <% } %>
+
+    <% if (!participante && !expiration.isExpired) { %>
       <section class="card">
         <form action="/role/<%= role.codigo %>/entrar" method="POST" class="stack">
           <label for="nome">Seu nome ou apelido</label>
           <input id="nome" name="nome" type="text" maxlength="60" required placeholder="Ex: Otavio">
+          <div class="avatar-picker">
+            <p class="eyebrow">Escolha seu avatar</p>
+            <div class="avatar-grid">
+              <% avatarOptions.forEach(function(avatar, index) { %>
+                <label class="avatar-option">
+                  <input type="radio" name="avatar" value="<%= avatar.id %>" <%= index === 0 ? 'checked' : '' %>>
+                  <span class="avatar-icon"><%= avatar.icon %></span>
+                  <span><%= avatar.label %></span>
+                </label>
+              <% }) %>
+            </div>
+          </div>
           <button type="submit" class="primary-button">Entrar no rolê</button>
         </form>
       </section>
-    <% } else { %>
+    <% } else if (participante) { %>
       <section class="thermo-card">
         <div class="thermo-top">
           <div>
@@ -44,38 +70,64 @@
         <div class="meter" aria-label="Clima geral em <%= termometro.media %>%">
           <span style="width: <%= termometro.media %>%"></span>
         </div>
-        <p class="most-voted">Status mais comum: <strong><%= termometro.statusMaisVotado %></strong></p>
+        <p class="most-voted">Sinal mais comum: <strong><%= termometro.sinalMaisVotado %></strong></p>
       </section>
 
+      <% if (!expiration.isExpired) { %>
       <section class="card">
         <div class="section-title">
           <div>
-            <p class="eyebrow">Votar como</p>
-            <h2><%= participante.participante_nome %></h2>
+            <p class="eyebrow">Avaliar como</p>
+            <h2><%= participante.participante_avatar ? avatarOptions.find(function(a) { return a.id === participante.participante_avatar; }).icon : '' %> <%= participante.participante_nome %></h2>
           </div>
         </div>
 
         <form action="/role/<%= role.codigo %>/votar" method="POST" id="voteForm">
+          <div class="score-box">
+            <label for="nota">Nota do rolê</label>
+            <div class="score-value">
+              <strong id="scoreOutput">75</strong>
+              <span>/100</span>
+            </div>
+            <input id="nota" name="nota" type="range" min="0" max="100" value="75" step="1">
+            <div class="score-scale">
+              <span>0</span>
+              <span>50</span>
+              <span>100</span>
+            </div>
+          </div>
+
           <label class="check-row">
             <input type="checkbox" id="anonymousCheckbox">
             <span>Enviar anonimamente</span>
           </label>
           <input type="hidden" name="anonimo" id="anonymousInput" value="false">
-          <div class="vote-grid">
+
+          <input type="hidden" name="status" id="statusInput" value="">
+          <div class="signal-title">
+            <p class="eyebrow">Sinal do rolê</p>
+            <span>Opcional, não mexe na nota</span>
+          </div>
+          <div class="vote-grid signal-grid">
             <% statusList.forEach(function(status) { %>
               <button
                 class="vote-button"
-                type="submit"
-                name="status"
-                value="<%= status %>"
+                type="button"
                 data-status="<%= status %>"
+                data-commentable="<%= commentableStatuses.includes(status) ? 'true' : 'false' %>"
                 data-sensitive="<%= sensitiveStatuses.includes(status) ? 'true' : 'false' %>">
                 <%= status %>
               </button>
             <% }) %>
           </div>
+          <div class="comment-box is-hidden" id="commentBox">
+            <label for="comentario">Comentário curto</label>
+            <input id="comentario" name="comentario" type="text" maxlength="30" placeholder="Até 30 caracteres">
+          </div>
+          <button type="submit" class="primary-button submit-vote">Enviar avaliação</button>
         </form>
       </section>
+      <% } %>
 
       <section class="card">
         <div class="section-title">
@@ -90,8 +142,68 @@
           <ul class="recent-list">
             <% recentes.forEach(function(voto) { %>
               <li>
-                <span><%= voto.anonimo ? 'Anônimo' : voto.participante_nome %></span>
-                <strong><%= voto.status %></strong>
+                <% const avatarAtual = avatarOptions.find(function(a) { return a.id === voto.participante_avatar; }); %>
+                <span><%= voto.anonimo ? 'Anônimo' : ((avatarAtual ? avatarAtual.icon + ' ' : '') + voto.participante_nome) %> · <%= voto.horario %></span>
+                <strong><%= voto.nota %>/100<%= voto.status ? ' · ' + voto.status : '' %></strong>
+                <% if (voto.comentario) { %>
+                  <p class="short-comment"><%= voto.comentario %></p>
+                <% } %>
+                <% if (voto.quickPollOptions) { %>
+                  <div class="quick-poll">
+                    <% voto.quickPollOptions.forEach(function(opcao) { %>
+                      <form action="/role/<%= role.codigo %>/sinal/<%= voto.id %>/responder" method="POST">
+                        <input type="hidden" name="resposta" value="<%= opcao %>">
+                        <% if (voto.status === '🗺️ Vamo pra outro lugar' && opcao === 'Bora') { %>
+                          <input
+                            class="suggestion-input"
+                            name="sugestao"
+                            type="text"
+                            maxlength="40"
+                            placeholder="Sugere um lugar"
+                            value="<%= voto.quickPollUserResponse === opcao && voto.quickPollUserSuggestion ? voto.quickPollUserSuggestion : '' %>"
+                            <%= expiration.isExpired || voto.participante_id === participante.participante_id ? 'disabled' : '' %>>
+                        <% } %>
+                        <button
+                          type="submit"
+                          class="poll-button <%= voto.quickPollUserResponse === opcao ? 'is-selected' : '' %>"
+                          <%= expiration.isExpired || voto.participante_id === participante.participante_id || voto.quickPollUserResponse ? 'disabled' : '' %>>
+                          <span><%= opcao %></span>
+                          <strong><%= voto.quickPollCounts[opcao] || 0 %></strong>
+                        </button>
+                      </form>
+                    <% }) %>
+                    <% if (voto.quickPollSuggestions && voto.quickPollSuggestions.length > 0) { %>
+                      <div class="suggestions">
+                        <span>Sugestões:</span>
+                        <% voto.quickPollSuggestions.forEach(function(sugestao) { %>
+                          <div class="suggestion-card">
+                            <strong><%= sugestao.texto %></strong>
+                            <div class="suggestion-actions">
+                              <form action="/role/<%= role.codigo %>/sugestao/<%= sugestao.id %>/votar" method="POST">
+                                <input type="hidden" name="valor" value="1">
+                                <button
+                                  type="submit"
+                                  class="mini-vote <%= sugestao.userVote === 1 ? 'is-selected' : '' %>"
+                                  <%= expiration.isExpired || sugestao.participante_id === participante.participante_id || sugestao.userVote ? 'disabled' : '' %>>
+                                  👍 <%= sugestao.positivos %>
+                                </button>
+                              </form>
+                              <form action="/role/<%= role.codigo %>/sugestao/<%= sugestao.id %>/votar" method="POST">
+                                <input type="hidden" name="valor" value="-1">
+                                <button
+                                  type="submit"
+                                  class="mini-vote <%= sugestao.userVote === -1 ? 'is-selected' : '' %>"
+                                  <%= expiration.isExpired || sugestao.participante_id === participante.participante_id || sugestao.userVote ? 'disabled' : '' %>>
+                                  👎 <%= sugestao.negativos %>
+                                </button>
+                              </form>
+                            </div>
+                          </div>
+                        <% }) %>
+                      </div>
+                    <% } %>
+                  </div>
+                <% } %>
               </li>
             <% }) %>
           </ul>

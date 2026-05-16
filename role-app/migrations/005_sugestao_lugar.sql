@@ -1,0 +1,2 @@
+ALTER TABLE sinal_respostas
+  ADD COLUMN IF NOT EXISTS sugestao VARCHAR(40);

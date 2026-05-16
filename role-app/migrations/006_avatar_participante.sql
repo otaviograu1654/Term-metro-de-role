@@ -1,0 +1,2 @@
+ALTER TABLE participantes
+  ADD COLUMN IF NOT EXISTS avatar VARCHAR(40);

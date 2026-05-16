@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entrar | Como Ta o Role?</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <main class="app-shell center-shell">
+    <section class="card">
+      <p class="eyebrow">Area do criador</p>
+      <h1 class="compact-title">Como Tá o Rolê?</h1>
+      <% if (erro) { %>
+        <p class="error-text"><%= erro %></p>
+      <% } %>
+      <form action="/login" method="POST" class="stack">
+        <label for="username">Usuario</label>
+        <input id="username" name="username" type="text" required autocomplete="username">
+        <label for="password">Senha</label>
+        <input id="password" name="password" type="password" required autocomplete="current-password">
+        <button type="submit" class="primary-button">Entrar</button>
+      </form>
+    </section>
+  </main>
+</body>
+</html>
