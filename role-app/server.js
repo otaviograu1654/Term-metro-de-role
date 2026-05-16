@@ -4,7 +4,9 @@ const path = require('path');
 const crypto = require('crypto');
 const express = require('express');
 const session = require('express-session');
-const { Pool } = require('pg');
+const { Pool, types } = require('pg');
+
+types.setTypeParser(1114, (value) => value);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -292,6 +294,14 @@ function normalizeSuggestion(value, status, resposta) {
 }
 
 function formatDateTime(value) {
+  if (typeof value === 'string') {
+    const match = value.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})/);
+
+    if (match) {
+      return `${match[3]}/${match[2]}, ${match[4]}:${match[5]}`;
+    }
+  }
+
   return new Intl.DateTimeFormat('pt-BR', {
     timeZone: 'America/Sao_Paulo',
     day: '2-digit',
@@ -301,8 +311,31 @@ function formatDateTime(value) {
   }).format(new Date(value));
 }
 
+function dbTimestampToDate(value) {
+  if (value instanceof Date) {
+    return value;
+  }
+
+  if (typeof value === 'string') {
+    const match = value.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})(?::(\d{2}))?/);
+
+    if (match) {
+      return new Date(Date.UTC(
+        Number(match[1]),
+        Number(match[2]) - 1,
+        Number(match[3]),
+        Number(match[4]) + 3,
+        Number(match[5]),
+        Number(match[6] || 0)
+      ));
+    }
+  }
+
+  return new Date(value);
+}
+
 function getRoleExpiration(role) {
-  const createdAt = new Date(role.criado_em);
+  const createdAt = dbTimestampToDate(role.criado_em);
   const expiresAt = new Date(createdAt.getTime() + ROLE_EXPIRES_AFTER_HOURS * 60 * 60 * 1000);
   const isExpired = role.encerrado || Date.now() >= expiresAt.getTime();
 
@@ -691,7 +724,7 @@ app.post('/role/:codigo/votar', async (req, res) => {
       const latestComment = await getLatestParticipantComment(role.id, participante.participante_id, status);
 
       if (latestComment) {
-        const elapsedMs = Date.now() - new Date(latestComment.criado_em).getTime();
+        const elapsedMs = Date.now() - dbTimestampToDate(latestComment.criado_em).getTime();
         const cooldownMs = COMMENT_COOLDOWN_MINUTES * 60 * 1000;
 
         if (elapsedMs < cooldownMs) {
@@ -706,7 +739,7 @@ app.post('/role/:codigo/votar', async (req, res) => {
       const latestVote = await getLatestParticipantVote(role.id, participante.participante_id);
 
       if (latestVote) {
-        const elapsedMs = Date.now() - new Date(latestVote.criado_em).getTime();
+        const elapsedMs = Date.now() - dbTimestampToDate(latestVote.criado_em).getTime();
         const cooldownMs = VOTE_COOLDOWN_MINUTES * 60 * 1000;
 
         if (elapsedMs < cooldownMs) {

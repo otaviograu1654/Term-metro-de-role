@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS roles (
   id SERIAL PRIMARY KEY,
   codigo VARCHAR(10) UNIQUE NOT NULL,
   nome VARCHAR(100) NOT NULL,
-  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  criado_em TIMESTAMP DEFAULT timezone('America/Sao_Paulo', now()),
   encerrado BOOLEAN DEFAULT FALSE
 );
 
@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS participantes (
   role_id INTEGER NOT NULL REFERENCES roles(id) ON DELETE CASCADE,
   nome VARCHAR(60) NOT NULL,
   avatar VARCHAR(40),
-  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  criado_em TIMESTAMP DEFAULT timezone('America/Sao_Paulo', now())
 );
 
 CREATE TABLE IF NOT EXISTS votos (
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS votos (
   status VARCHAR(80),
   comentario VARCHAR(30),
   anonimo BOOLEAN DEFAULT FALSE,
-  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  criado_em TIMESTAMP DEFAULT timezone('America/Sao_Paulo', now())
 );
 
 CREATE TABLE IF NOT EXISTS sinal_respostas (
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS sinal_respostas (
   participante_id INTEGER NOT NULL REFERENCES participantes(id) ON DELETE CASCADE,
   resposta VARCHAR(80) NOT NULL,
   sugestao VARCHAR(40),
-  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  criado_em TIMESTAMP DEFAULT timezone('America/Sao_Paulo', now()),
   UNIQUE (voto_id, participante_id)
 );
 
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS sugestao_votos (
   role_id INTEGER NOT NULL REFERENCES roles(id) ON DELETE CASCADE,
   participante_id INTEGER NOT NULL REFERENCES participantes(id) ON DELETE CASCADE,
   valor SMALLINT NOT NULL CHECK (valor IN (-1, 1)),
-  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  criado_em TIMESTAMP DEFAULT timezone('America/Sao_Paulo', now()),
   UNIQUE (sinal_resposta_id, participante_id)
 );
 
