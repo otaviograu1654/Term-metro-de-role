@@ -1,0 +1,28 @@
+CREATE TABLE IF NOT EXISTS roles (
+  id SERIAL PRIMARY KEY,
+  codigo VARCHAR(10) UNIQUE NOT NULL,
+  nome VARCHAR(100) NOT NULL,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  encerrado BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE IF NOT EXISTS participantes (
+  id SERIAL PRIMARY KEY,
+  role_id INTEGER NOT NULL REFERENCES roles(id) ON DELETE CASCADE,
+  nome VARCHAR(60) NOT NULL,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS votos (
+  id SERIAL PRIMARY KEY,
+  role_id INTEGER NOT NULL REFERENCES roles(id) ON DELETE CASCADE,
+  participante_id INTEGER NOT NULL REFERENCES participantes(id) ON DELETE CASCADE,
+  status VARCHAR(80) NOT NULL,
+  anonimo BOOLEAN DEFAULT FALSE,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_roles_codigo ON roles(codigo);
+CREATE INDEX IF NOT EXISTS idx_participantes_role_id ON participantes(role_id);
+CREATE INDEX IF NOT EXISTS idx_votos_role_id ON votos(role_id);
+CREATE INDEX IF NOT EXISTS idx_votos_participante_id ON votos(participante_id);

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= role.nome %> | Como Ta o Role?</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="role-header">
+      <a class="back-link" href="/">Criar outro</a>
+      <p class="eyebrow">Role privado</p>
+      <h1><%= role.nome %></h1>
+      <span class="code-pill"><%= role.codigo %></span>
+    </section>
+
+    <section class="card share-card">
+      <p>Compartilhe este link com seus amigos:</p>
+      <div class="copy-row">
+        <input id="shareLink" type="text" value="<%= shareUrl %>" readonly>
+        <button type="button" id="copyLinkButton" class="small-button">Copiar link</button>
+      </div>
+      <p id="copyFeedback" class="feedback" aria-live="polite"></p>
+    </section>
+
+    <% if (!participante) { %>
+      <section class="card">
+        <form action="/role/<%= role.codigo %>/entrar" method="POST" class="stack">
+          <label for="nome">Seu nome ou apelido</label>
+          <input id="nome" name="nome" type="text" maxlength="60" required placeholder="Ex: Otavio">
+          <button type="submit" class="primary-button">Entrar no rolê</button>
+        </form>
+      </section>
+    <% } else { %>
+      <section class="thermo-card">
+        <div class="thermo-top">
+          <div>
+            <p class="eyebrow">Clima geral</p>
+            <strong><%= termometro.media %>%</strong>
+          </div>
+          <span><%= termometro.quantidade %> pessoa<%= termometro.quantidade === 1 ? '' : 's' %> votaram</span>
+        </div>
+        <div class="meter" aria-label="Clima geral em <%= termometro.media %>%">
+          <span style="width: <%= termometro.media %>%"></span>
+        </div>
+        <p class="most-voted">Status mais comum: <strong><%= termometro.statusMaisVotado %></strong></p>
+      </section>
+
+      <section class="card">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Votar como</p>
+            <h2><%= participante.participante_nome %></h2>
+          </div>
+        </div>
+
+        <form action="/role/<%= role.codigo %>/votar" method="POST" id="voteForm">
+          <label class="check-row">
+            <input type="checkbox" id="anonymousCheckbox">
+            <span>Enviar anonimamente</span>
+          </label>
+          <input type="hidden" name="anonimo" id="anonymousInput" value="false">
+          <div class="vote-grid">
+            <% statusList.forEach(function(status) { %>
+              <button
+                class="vote-button"
+                type="submit"
+                name="status"
+                value="<%= status %>"
+                data-status="<%= status %>"
+                data-sensitive="<%= sensitiveStatuses.includes(status) ? 'true' : 'false' %>">
+                <%= status %>
+              </button>
+            <% }) %>
+          </div>
+        </form>
+      </section>
+
+      <section class="card">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Ao vivo</p>
+            <h2>Últimas avaliações</h2>
+          </div>
+        </div>
+        <% if (recentes.length === 0) { %>
+          <p class="empty">Ainda ninguem votou nesse role.</p>
+        <% } else { %>
+          <ul class="recent-list">
+            <% recentes.forEach(function(voto) { %>
+              <li>
+                <span><%= voto.anonimo ? 'Anônimo' : voto.participante_nome %></span>
+                <strong><%= voto.status %></strong>
+              </li>
+            <% }) %>
+          </ul>
+        <% } %>
+      </section>
+    <% } %>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>

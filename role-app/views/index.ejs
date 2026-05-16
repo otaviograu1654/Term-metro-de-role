@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Como Ta o Role?</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero">
+      <p class="eyebrow">Termometro do role</p>
+      <h1>Como Tá o Rolê?</h1>
+      <p>Crie um rolê, mande o link para seus amigos e veja o clima em tempo real.</p>
+    </section>
+
+    <section class="card">
+      <form action="/roles" method="POST" class="stack">
+        <label for="nome">Nome do rolê</label>
+        <input id="nome" name="nome" type="text" maxlength="100" required placeholder="Ex: Sexta na casa da Ana">
+        <button type="submit" class="primary-button">Criar rolê</button>
+      </form>
+    </section>
+  </main>
+</body>
+</html>
