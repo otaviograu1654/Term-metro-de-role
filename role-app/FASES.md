@@ -39,13 +39,35 @@ A primeira versao nao tem parte publica para bares, eventos, mapa, pagamento ou 
 
 ## Proximas fases
 
+### MVP de grupo interno
+
+Fases para deixar o app forte como ferramenta privada de grupo antes de virar avaliacao publica de lugares.
+
+- [ ] Fase 24 - Seguranca base
+- [ ] Fase 36 - Configuracoes do role
+- [ ] Fase 37 - Decisoes importantes do grupo
+- [ ] Fase 30 - Localizacao do role
+- [ ] Fase 38 - Localizacao em tempo real opcional
+- [ ] Fase 39 - Participantes ativos
+- [ ] Fase 40 - Moderacao simples do criador
+- [ ] Fase 41 - Sessao persistente
+- [ ] Fase 42 - Painel detalhado do role
+- [ ] Fase 47 - Avatares com imagens proprias
+- [ ] Fase 48 - Criador de avatar por camadas
+
+### MVP funcional e expansao
+
+Fases para deixar o produto pronto para uso mais amplo, dominio, pagamento e, depois, avaliacao de lugares.
+
 - [ ] Fase 15 - Publicar no Render
 - [ ] Fase 16 - Dominio proprio
-- [ ] Fase 24 - Seguranca base
 - [ ] Fase 28 - Pagamento e planos
 - [ ] Fase 29 - Modo pub e ambiente fechado
-- [ ] Fase 30 - Localizacao do role
 - [ ] Fase 35 - Vitrine de roles com previa
+- [ ] Fase 43 - Roles publicos e privados
+- [ ] Fase 44 - Avaliacao de lugares
+- [ ] Fase 45 - Ranking e pagina de lugar
+- [ ] Fase 46 - Regras comerciais para estabelecimentos
 
 ## Fases originais
 
@@ -361,6 +383,238 @@ Regras importantes:
 - comentarios anonimos continuam anonimos;
 - sinais sensiveis devem ser resumidos com cuidado;
 - antes de entrar, a pessoa ve o clima, mas nao interage.
+
+### Fase 36 - Configuracoes do role
+
+Permitir que o criador configure o role em vez de tudo ser pre-definido.
+
+Configuracoes iniciais:
+
+- duracao do role: 2h, 6h, 12h, 24h;
+- permitir ou nao comentarios curtos;
+- permitir ou nao sinais sensiveis;
+- ativar ou desativar trava de voto;
+- escolher se o role exige localizacao para votar;
+- escolher se o role aparece apenas por link ou em uma lista futura;
+- encerrar manualmente.
+
+Essa fase deixa o app mais flexivel para testar diferentes tipos de grupo.
+
+### Fase 37 - Decisoes importantes do grupo
+
+Criar votacoes importantes que aparecem com destaque para todos no role.
+
+Exemplos:
+
+- Vamos embora?
+- Vamos procurar um after?
+- Vamos para outro lugar?
+- Vamos fechar a conta?
+
+Regras:
+
+- criador ou sinal forte pode abrir a decisao;
+- prazo curto, como 5 minutos;
+- quem entra durante a decisao ve a votacao em destaque;
+- idealmente a pessoa precisa votar antes de continuar usando o role;
+- resultado fica registrado no historico;
+- cada participante vota uma vez e nao troca.
+
+Essa fase e diferente dos sinais rapidos: ela funciona como uma decisao coletiva do grupo.
+
+### Fase 38 - Localizacao em tempo real opcional
+
+Permitir que o participante compartilhe localizacao aproximada ou em tempo real durante o role.
+
+Objetivos:
+
+- ajudar a confirmar que a pessoa esta no local;
+- reduzir voto aleatorio de gente fora do role;
+- facilitar encontrar o grupo em ambiente grande;
+- futuramente permitir "estou perto" ou "cheguei".
+
+Cuidados:
+
+- pedir permissao clara no navegador;
+- deixar opcional no MVP;
+- nunca mostrar localizacao precisa publicamente;
+- permitir ao criador exigir localizacao para votar, se fizer sentido;
+- guardar o minimo possivel;
+- evitar mapa em tempo real publico no inicio.
+
+Complexidade:
+
+- localizacao simples no navegador e viavel;
+- mapa em tempo real de todo mundo da mais trabalho;
+- exigir presenca por raio do local depende da Fase 30, com local do role definido.
+
+Sugestao para MVP: comecar com "confirmar presenca" usando geolocalizacao do navegador, sem mapa ao vivo.
+
+### Fase 39 - Participantes ativos
+
+Mostrar quem esta no role e quem interagiu recentemente.
+
+Ideias:
+
+- lista de participantes com avatar;
+- ultimo horario de atividade;
+- contador de pessoas no role;
+- separar ativos e inativos;
+- nao mostrar dados sensiveis.
+
+### Fase 40 - Moderacao simples do criador
+
+Permitir ao criador controlar o role durante o uso.
+
+Funcoes:
+
+- encerrar role;
+- ocultar sinal/comentario;
+- remover participante problemático;
+- limpar historico do role;
+- copiar link rapidamente.
+
+### Fase 41 - Sessao persistente
+
+Melhorar a permanencia do participante.
+
+Hoje o participante depende do cookie/sessao do navegador. Essa fase melhora:
+
+- continuar como o mesmo nome/avatar;
+- evitar duplicar participante no mesmo aparelho;
+- mostrar "continuar como";
+- trocar nome/avatar se necessario.
+
+### Fase 42 - Painel detalhado do role
+
+Criar uma visao melhor para o criador acompanhar um role especifico.
+
+Indicadores:
+
+- termometro atual;
+- historico;
+- decisoes abertas;
+- sugestoes mais votadas;
+- participantes;
+- sinais sensiveis;
+- link compartilhavel.
+
+### Fase 43 - Roles publicos e privados
+
+Separar claramente roles privados por link e roles publicos/listados.
+
+Regras:
+
+- privado: apenas quem tem link entra;
+- publico: pode aparecer em vitrine/lista;
+- criador escolhe visibilidade;
+- publico pode exigir moderacao/aprovacao.
+
+### Fase 44 - Avaliacao de lugares
+
+Comecar a evoluir de role interno para avaliacao de locais.
+
+Ideia:
+
+- um lugar pode ter varios roles;
+- roles geram sinais e notas temporarias;
+- lugar tem pagina propria;
+- avaliacoes de lugar devem ser separadas das decisoes internas do grupo.
+
+### Fase 45 - Ranking e pagina de lugar
+
+Criar paginas para lugares com historico agregado.
+
+Possibilidades:
+
+- media recente;
+- melhores horarios;
+- sinais frequentes;
+- comentarios moderados;
+- roles recentes publicos;
+- botao para criar role naquele lugar.
+
+### Fase 46 - Regras comerciais para estabelecimentos
+
+Planejar recursos pagos para bares, pubs e eventos.
+
+Possibilidades:
+
+- perfil verificado;
+- painel do estabelecimento;
+- destaque em vitrine;
+- resposta do estabelecimento;
+- estatisticas agregadas;
+- planos pagos.
+
+### Fase 47 - Avatares com imagens proprias
+
+Trocar os emojis atuais por imagens proprias do app.
+
+Objetivo:
+
+- deixar o app menos generico;
+- criar identidade visual propria;
+- manter a escolha de avatar simples;
+- preparar o caminho para personalizacao futura.
+
+Formato recomendado:
+
+- imagens PNG ou WebP;
+- tamanho base 512x512;
+- fundo transparente;
+- mesma linguagem visual em todos;
+- salvar em `/public/avatars`.
+
+Ferramentas possiveis para criar ideias:
+
+- VRoid Studio para personagem estilo jogo/anime/3D;
+- Ready Player Me para avatar 3D customizavel;
+- Canva ou Figma para sticker/icone 2D;
+- Aseprite ou Piskel para pixel art;
+- Picrew apenas com cuidado com direitos de uso/licenca.
+
+Implementacao tecnica:
+
+- trocar `{ icon: 'emoji' }` por `{ image: '/avatars/nome.png' }`;
+- manter `id` e `label` do avatar no banco;
+- exibir `<img>` no lugar do emoji;
+- manter fallback para emoji se a imagem nao carregar.
+
+### Fase 48 - Criador de avatar por camadas
+
+Criar um editor simples dentro do app para a propria pessoa customizar o avatar.
+
+Ideia:
+
+- rosto;
+- tom de pele;
+- cabelo;
+- cor do cabelo;
+- barba/bigode;
+- oculos;
+- bone/acessorio;
+- roupa/cor;
+- expressao.
+
+O avatar pode ser renderizado combinando camadas SVG/PNG. Em vez de salvar uma imagem final no banco, o app salva a configuracao:
+
+```json
+{
+  "skin": "medium",
+  "hair": "curly",
+  "hairColor": "black",
+  "facialHair": "mustache",
+  "accessory": "glasses",
+  "shirt": "green"
+}
+```
+
+Recomendacao:
+
+- primeiro criar avatares prontos melhores;
+- depois evoluir para customizacao por camadas;
+- evitar 3D no MVP interno para nao aumentar muito a complexidade.
 
 ## Observacoes de produto
 
