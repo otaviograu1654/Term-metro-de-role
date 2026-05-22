@@ -398,7 +398,7 @@ input[type="password"]:focus {
   display: grid;
   gap: 4px;
   place-items: center;
-  min-height: 86px;
+  min-height: 128px;
   padding: 10px;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -422,6 +422,44 @@ input[type="password"]:focus {
 
 .avatar-icon {
   font-size: 1.8rem;
+}
+
+.avatar-img {
+  width: 72px;
+  height: 72px;
+  border-radius: 999px;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  background: #10141a;
+}
+
+.person-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar-mini {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  object-fit: cover;
+  background: #10141a;
+}
+
+.activity-person {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.avatar-tiny {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  object-fit: cover;
+  background: #10141a;
 }
 
 .is-hidden {

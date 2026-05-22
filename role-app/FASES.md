@@ -36,6 +36,7 @@ A primeira versao nao tem parte publica para bares, eventos, mapa, pagamento ou 
 - [x] Fase 26 - Area do criador
 - [x] Fase 27 - Controle de criacao de roles
 - [x] Fase 21 - Avatar do participante
+- [x] Fase 47 - Avatares com imagens proprias
 
 ## Proximas fases
 
@@ -52,7 +53,6 @@ Fases para deixar o app forte como ferramenta privada de grupo antes de virar av
 - [ ] Fase 40 - Moderacao simples do criador
 - [ ] Fase 41 - Sessao persistente
 - [ ] Fase 42 - Painel detalhado do role
-- [ ] Fase 47 - Avatares com imagens proprias
 - [ ] Fase 48 - Criador de avatar por camadas
 
 ### MVP funcional e expansao
@@ -285,6 +285,26 @@ Possibilidades:
 - busca de lugares via Google Places API;
 - mapa embutido na pagina do role;
 - botao para abrir rota no Google Maps/Waze.
+foco em decisoes rapidas;
+interface simples e objetiva;
+idealmente a pessoa vota antes de continuar usando o role.
+Atualizacao da Fase 30 - Localizacao do role
+
+Permitir validacao opcional por proximidade fisica do role.
+
+Possibilidades:
+
+criador define um raio aproximado:
+20m;
+50m;
+100m;
+participante precisa estar proximo do local para votar;
+Objetivos:
+
+reduzir votos aleatorios;
+confirmar presenca no role;
+evitar invasao por link compartilhado fora do contexto;
+melhorar confiabilidade do termometro.
 
 Para comecar, a melhor opcao e aceitar um nome do local e um link do Google Maps. Isso evita complexidade, reduz custo e ja resolve o uso real. Depois, se fizer sentido, integrar Google Places API para buscar o local direto dentro do app.
 
@@ -294,6 +314,7 @@ Pontos de atencao:
 - nao expor a localizacao precisa de pessoas, apenas do local do role;
 - validar links para evitar abuso;
 - deixar a localizacao opcional.
+
 
 ### Fase 31 - Expiracao automatica do role
 
@@ -414,13 +435,28 @@ Exemplos:
 Regras:
 
 - criador ou sinal forte pode abrir a decisao;
-- prazo curto, como 5 minutos;
+- votacao possui tempo limite:
+
+5 minutos;
+10 minutos;
+20 minutos; 
+quem crioe a enquete que decide o tempo que vai ficar aberta
 - quem entra durante a decisao ve a votacao em destaque;
 - idealmente a pessoa precisa votar antes de continuar usando o role;
 - resultado fica registrado no historico;
 - cada participante vota uma vez e nao troca.
+Resultados possiveis:
+
+aprovado;
+flopou;
+empate.
+foco em decisoes rapidas;
+interface simples e objetiva;
+idealmente a pessoa vota antes de continuar usando o role.
 
 Essa fase e diferente dos sinais rapidos: ela funciona como uma decisao coletiva do grupo.
+
+
 
 ### Fase 38 - Localizacao em tempo real opcional
 
@@ -615,6 +651,206 @@ Recomendacao:
 - primeiro criar avatares prontos melhores;
 - depois evoluir para customizacao por camadas;
 - evitar 3D no MVP interno para nao aumentar muito a complexidade.
+
+Fase 49 - Delay de privacidade nos sinais
+
+Criar um atraso proposital para exibicao de sinais e interacoes no role.
+
+Objetivo:
+
+Evitar que participantes descubram quem enviou um sinal observando quem acabou de mexer no celular, principalmente em grupos pequenos.
+
+Funcionamento inicial:
+
+sinais entram em fila antes de aparecer;
+atraso aleatorio entre 1 e 2 minutos;
+sistema nao revela horario exato do envio;
+atualizacao nao acontece imediatamente;
+especialmente importante para sinais sensiveis.
+
+Sinais prioritarios:
+
+To desconfortavel
+Quero ir embora
+Tem uma pessoa me encarando
+
+Possibilidades futuras:
+
+aplicar delay em todos os sinais;
+modo de privacidade reforcada;
+configuracao do delay pelo criador;
+delays diferentes por categoria.
+
+Mensagem sugerida:
+
+“Protecao de anonimato ativa”
+“Alguns sinais podem demorar um pouco para aparecer”
+
+Importante:
+
+nao mostrar “digitando”;
+nao mostrar ordem exata das interacoes;
+preservar anonimato social do grupo;
+evitar identificacao indireta de participantes.
+
+Fase 49 - Delay de privacidade nos sinais
+
+Criar um atraso proposital para exibicao de sinais e interacoes no role.
+
+Objetivo:
+
+Evitar que participantes descubram quem enviou um sinal observando quem acabou de mexer no celular, principalmente em grupos pequenos.
+
+Funcionamento inicial:
+
+sinais entram em fila antes de aparecer;
+atraso aleatorio entre 1 e 2 minutos;
+sistema nao revela horario exato do envio;
+atualizacao nao acontece imediatamente;
+especialmente importante para sinais sensiveis.
+
+Sinais prioritarios:
+
+To desconfortavel
+Quero ir embora
+Tem uma pessoa me encarando
+
+Possibilidades futuras:
+
+aplicar delay em todos os sinais;
+modo de privacidade reforcada;
+configuracao do delay pelo criador;
+delays diferentes por categoria.
+
+Mensagem sugerida:
+
+“Protecao de anonimato ativa”
+“Alguns sinais podem demorar um pouco para aparecer”
+
+Importante:
+
+nao mostrar “digitando”;
+nao mostrar ordem exata das interacoes;
+preservar anonimato social do grupo;
+evitar identificacao indireta de participantes.
+Fase 50 - Linha do tempo do role
+
+Criar uma linha do tempo automatica com os acontecimentos mais importantes do role.
+
+Objetivos:
+
+transformar o role em uma memoria resumida da noite;
+mostrar os principais momentos do grupo;
+gerar historico automatico sem virar chat;
+permitir leitura rapida do que aconteceu.
+
+Eventos detectados:
+
+inicio do role;
+pico da nota;
+queda forte do clima;
+aumento repentino da energia;
+votacoes abertas;
+votacoes encerradas;
+decisoes do grupo;
+mudanca de estado do role;
+encerramento automatico ou manual.
+
+Exemplos:
+
+22:14 — Role começou
+22:31 — “Bora pra pista” aumentou
+23:02 — Nota chegou em 87
+00:41 — Votacao “Trocar de lugar?” abriu
+00:58 — Votacao flopou
+01:30 — Grupo decidiu procurar after
+02:04 — Role encerrado
+
+Regras importantes:
+
+nao mostrar quem enviou sinais anonimos;
+nao revelar localizacao do after;
+evitar excesso de eventos irrelevantes;
+priorizar momentos coletivos importantes.
+Fase 51 - Estados do role
+
+Criar estados automaticos para representar o clima atual do role.
+
+Objetivos:
+
+deixar o role mais vivo;
+resumir rapidamente a energia do grupo;
+facilitar leitura instantanea do momento atual;
+complementar a nota de 0 a 100.
+
+Exemplos de estados:
+
+🔥 Bombando
+🟢 Fluindo
+🟡 Meio parado
+🔴 Dissolvendo
+🌅 Indo pro after
+
+Os estados podem ser calculados por:
+
+nota atual;
+atividade recente;
+quantidade de sinais;
+estabilidade das notas;
+participantes ativos;
+queda ou aumento rapido do clima.
+
+Exemplos:
+
+Nota 82
+Estado: Bombando
+
+Nota 41
+Estado: Dissolvendo
+
+Importante:
+
+os estados devem mudar naturalmente;
+evitar mudancas muito bruscas;
+nao depender apenas da nota;
+representar sensacao coletiva do role.
+Fase 52 - Historico e metricas do criador
+
+Permitir que o criador acompanhe metricas e historicos de roles anteriores.
+
+Objetivos:
+
+criar memoria dos roles;
+entender comportamento do grupo;
+comparar roles anteriores;
+acompanhar horarios de pico e queda.
+
+Metricas iniciais:
+
+maior nota atingida;
+horario de pico;
+horario de queda;
+duracao do role;
+quantidade de participantes;
+sinais mais usados;
+quantidade de votacoes abertas;
+horario comum de after;
+estado final do role.
+
+Exemplo:
+
+Role anterior:
+
+23:00 — Pico da noite (87)
+01:30 — Grupo decidiu procurar after
+02:10 — Estado: Dissolvendo
+
+Importante:
+
+nao mostrar dados pessoais;
+preservar anonimato dos participantes;
+nao salvar localizacao privada de after;
+manter foco em leitura coletiva do role.
 
 ## Observacoes de produto
 

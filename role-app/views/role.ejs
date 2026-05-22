@@ -49,7 +49,11 @@
               <% avatarOptions.forEach(function(avatar, index) { %>
                 <label class="avatar-option">
                   <input type="radio" name="avatar" value="<%= avatar.id %>" <%= index === 0 ? 'checked' : '' %>>
-                  <span class="avatar-icon"><%= avatar.icon %></span>
+                  <% if (avatar.image) { %>
+                    <img class="avatar-img" src="<%= avatar.image %>" alt="">
+                  <% } else { %>
+                    <span class="avatar-icon"><%= avatar.icon %></span>
+                  <% } %>
                   <span><%= avatar.label %></span>
                 </label>
               <% }) %>
@@ -78,7 +82,15 @@
         <div class="section-title">
           <div>
             <p class="eyebrow">Avaliar como</p>
-            <h2><%= participante.participante_avatar ? avatarOptions.find(function(a) { return a.id === participante.participante_avatar; }).icon : '' %> <%= participante.participante_nome %></h2>
+            <% const avatarParticipante = avatarOptions.find(function(a) { return a.id === participante.participante_avatar; }); %>
+            <h2 class="person-title">
+              <% if (avatarParticipante && avatarParticipante.image) { %>
+                <img class="avatar-mini" src="<%= avatarParticipante.image %>" alt="">
+              <% } else if (avatarParticipante && avatarParticipante.icon) { %>
+                <span><%= avatarParticipante.icon %></span>
+              <% } %>
+              <%= participante.participante_nome %>
+            </h2>
           </div>
         </div>
 
@@ -143,7 +155,19 @@
             <% recentes.forEach(function(voto) { %>
               <li>
                 <% const avatarAtual = avatarOptions.find(function(a) { return a.id === voto.participante_avatar; }); %>
-                <span><%= voto.anonimo ? 'Anônimo' : ((avatarAtual ? avatarAtual.icon + ' ' : '') + voto.participante_nome) %> · <%= voto.horario %></span>
+                <span class="activity-person">
+                  <% if (voto.anonimo) { %>
+                    Anônimo
+                  <% } else { %>
+                    <% if (avatarAtual && avatarAtual.image) { %>
+                      <img class="avatar-tiny" src="<%= avatarAtual.image %>" alt="">
+                    <% } else if (avatarAtual && avatarAtual.icon) { %>
+                      <span><%= avatarAtual.icon %></span>
+                    <% } %>
+                    <%= voto.participante_nome %>
+                  <% } %>
+                  · <%= voto.horario %>
+                </span>
                 <strong><%= voto.nota %>/100<%= voto.status ? ' · ' + voto.status : '' %></strong>
                 <% if (voto.comentario) { %>
                   <p class="short-comment"><%= voto.comentario %></p>

@@ -67,18 +67,20 @@ const FORCE_ANONYMOUS_STATUSES = [
 ];
 
 const AVATAR_OPTIONS = [
-  { id: 'loira', label: 'Loira', icon: '👱‍♀️' },
-  { id: 'morena', label: 'Morena', icon: '👩🏽' },
-  { id: 'morena-iluminada', label: 'Morena iluminada', icon: '✨' },
-  { id: 'cacheada', label: 'Cacheada', icon: '👩🏽‍🦱' },
-  { id: 'bigodin', label: 'Bigodin', icon: '👨🏻' },
-  { id: 'moreno-bigodin', label: 'Moreno de bigodin', icon: '👨🏽' },
-  { id: 'sem-barba', label: 'Sem barba', icon: '🙂' },
-  { id: 'barbudo', label: 'Barbudo', icon: '🧔' },
-  { id: 'oculos', label: 'Óculos', icon: '🤓' },
-  { id: 'bone', label: 'Boné', icon: '🧢' },
-  { id: 'ruiva', label: 'Ruiva', icon: '👩‍🦰' },
-  { id: 'brad-pit', label: 'Brad Pit', icon: '🎬' }
+  { id: 'barbudo', label: 'Barbudo', image: '/imagens/barbudo.png' },
+  { id: 'branca-cacheada', label: 'Branca cacheada', image: '/imagens/brancacacheada.png' },
+  { id: 'branco-degrade', label: 'Branco degradê', image: '/imagens/brancodegrade.png' },
+  { id: 'branco-old-money', label: 'Branco old money', image: '/imagens/brancooldmoney.png' },
+  { id: 'cabelo-preto-liso', label: 'Cabelo preto liso', image: '/imagens/cabelopretoliso.png' },
+  { id: 'cavanhaque', label: 'Cavanhaque', image: '/imagens/cavanhaque.png' },
+  { id: 'japinha', label: 'Japinha', image: '/imagens/japinha.png' },
+  { id: 'japones', label: 'Japonês', image: '/imagens/japones.png' },
+  { id: 'loira-olhos-claros', label: 'Loira olhos claros', image: '/imagens/loiraolhosclaros.png' },
+  { id: 'morena-cacheada', label: 'Morena cacheada', image: '/imagens/morenacacheada.png' },
+  { id: 'morena-liso', label: 'Morena cabelo liso', image: '/imagens/morenaliso.png' },
+  { id: 'moreno-barbudo', label: 'Moreno barbudo', image: '/imagens/morenobarbudo.png' },
+  { id: 'moreno-bigodin', label: 'Moreno bigodin', image: '/imagens/morenobigodin.png' },
+  { id: 'ruiva', label: 'Ruiva', image: '/imagens/ruiva.png' }
 ];
 
 const databaseUrl = process.env.DATABASE_URL || '';
@@ -97,6 +99,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('trust proxy', 1);
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/imagens', express.static(path.join(__dirname, 'imagens')));
 app.use(express.urlencoded({ extended: true }));
 app.use(session({
   secret: process.env.SESSION_SECRET || 'dev-secret-change-me',
