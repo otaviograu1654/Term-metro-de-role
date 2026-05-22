@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moderacao | Como Ta o Role?</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="role-header">
+      <a class="back-link" href="/dashboard">Voltar</a>
+      <p class="eyebrow">Moderacao do criador</p>
+      <h1><%= role.nome %></h1>
+      <span class="code-pill"><%= role.codigo %></span>
+    </section>
+
+    <% if (aviso) { %>
+      <section class="toast-card" role="status">
+        <p><%= aviso %></p>
+      </section>
+    <% } %>
+
+    <section class="card">
+      <div class="section-title">
+        <div>
+          <p class="eyebrow">Status</p>
+          <h2><%= role.expirado ? 'Role encerrado' : 'Role ativo' %></h2>
+        </div>
+      </div>
+      <p class="muted-line">Criado em <%= role.criado_em_label %> · Encerra em <%= role.expiracao_label %></p>
+      <div class="moderation-actions">
+        <a class="small-button neutral-button" href="/role/<%= role.codigo %>">Abrir link</a>
+        <% if (role.encerrado) { %>
+          <form action="/dashboard/role/<%= role.codigo %>/reabrir" method="POST">
+            <button type="submit" class="small-button neutral-button">Reabrir</button>
+          </form>
+        <% } else { %>
+          <form action="/dashboard/role/<%= role.codigo %>/encerrar" method="POST">
+            <button type="submit" class="small-button danger-button">Encerrar</button>
+          </form>
+        <% } %>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <div>
+          <p class="eyebrow">Pessoas</p>
+          <h2>Participantes</h2>
+        </div>
+      </div>
+      <% if (participantes.length === 0) { %>
+        <p class="empty">Nenhum participante entrou ainda.</p>
+      <% } else { %>
+        <ul class="moderation-list">
+          <% participantes.forEach(function(participante) { %>
+            <% const avatar = avatarOptions.find(function(item) { return item.id === participante.avatar; }); %>
+            <li>
+              <div class="moderation-person">
+                <% if (avatar && avatar.image) { %>
+                  <img class="avatar-tiny" src="<%= avatar.image %>" alt="">
+                <% } %>
+                <div>
+                  <strong><%= participante.nome %></strong>
+                  <span><%= participante.avaliacoes %> avaliacao<%= participante.avaliacoes === 1 ? '' : 'es' %> · <%= participante.ultima_interacao_label %></span>
+                </div>
+              </div>
+              <form action="/dashboard/role/<%= role.codigo %>/participante/<%= participante.id %>/remover" method="POST">
+                <button type="submit" class="icon-danger" aria-label="Remover participante">Remover</button>
+              </form>
+            </li>
+          <% }) %>
+        </ul>
+      <% } %>
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <div>
+          <p class="eyebrow">Historico</p>
+          <h2>Avaliacoes e sinais</h2>
+        </div>
+      </div>
+      <% if (votos.length === 0) { %>
+        <p class="empty">Ainda nao tem avaliacao para moderar.</p>
+      <% } else { %>
+        <ul class="moderation-list">
+          <% votos.forEach(function(voto) { %>
+            <% const avatar = avatarOptions.find(function(item) { return item.id === voto.participante_avatar; }); %>
+            <li>
+              <div class="moderation-entry">
+                <span class="activity-person">
+                  <% if (voto.anonimo) { %>
+                    Anonimo
+                  <% } else { %>
+                    <% if (avatar && avatar.image) { %>
+                      <img class="avatar-tiny" src="<%= avatar.image %>" alt="">
+                    <% } %>
+                    <%= voto.participante_nome %>
+                  <% } %>
+                  · <%= voto.horario %>
+                </span>
+                <strong><%= voto.nota %>/100<%= voto.status ? ' · ' + voto.status : '' %></strong>
+                <% if (voto.comentario) { %>
+                  <p class="short-comment"><%= voto.comentario %></p>
+                <% } %>
+                <% if (voto.respostas > 0) { %>
+                  <span><%= voto.respostas %> resposta<%= voto.respostas === 1 ? '' : 's' %> nessa votacao</span>
+                <% } %>
+              </div>
+              <form action="/dashboard/role/<%= role.codigo %>/voto/<%= voto.id %>/remover" method="POST">
+                <button type="submit" class="icon-danger" aria-label="Remover avaliacao">Remover</button>
+              </form>
+            </li>
+          <% }) %>
+        </ul>
+      <% } %>
+    </section>
+  </main>
+</body>
+</html>

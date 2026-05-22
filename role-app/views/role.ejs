@@ -9,7 +9,9 @@
 <body>
   <main class="app-shell">
     <section class="role-header">
-      <a class="back-link" href="/">Criar outro</a>
+      <% if (creatorLoggedIn) { %>
+        <a class="back-link" href="/dashboard">Painel</a>
+      <% } %>
       <p class="eyebrow">Role privado</p>
       <h1><%= role.nome %></h1>
       <span class="code-pill"><%= role.codigo %></span>
@@ -74,6 +76,36 @@
           <span style="width: <%= termometro.media %>%"></span>
         </div>
         <p class="most-voted">Sinal mais comum: <strong><%= termometro.sinalMaisVotado %></strong></p>
+      </section>
+
+      <section class="card">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">No rolê</p>
+            <h2>Quem entrou</h2>
+          </div>
+          <span class="count-pill"><%= participantes.length %></span>
+        </div>
+        <% if (participantes.length === 0) { %>
+          <p class="empty">Ainda ninguem entrou.</p>
+        <% } else { %>
+          <ul class="participant-list">
+            <% participantes.forEach(function(pessoa) { %>
+              <% const avatarPessoa = avatarOptions.find(function(a) { return a.id === pessoa.avatar; }); %>
+              <li class="<%= pessoa.id === participante.participante_id ? 'is-current' : '' %>">
+                <% if (avatarPessoa && avatarPessoa.image) { %>
+                  <img class="avatar-tiny" src="<%= avatarPessoa.image %>" alt="">
+                <% } else if (avatarPessoa && avatarPessoa.icon) { %>
+                  <span><%= avatarPessoa.icon %></span>
+                <% } %>
+                <div>
+                  <strong><%= pessoa.nome %><%= pessoa.id === participante.participante_id ? ' · você' : '' %></strong>
+                  <span><%= pessoa.ultima_interacao_label %></span>
+                </div>
+              </li>
+            <% }) %>
+          </ul>
+        <% } %>
       </section>
 
       <% if (!expiration.isExpired) { %>

@@ -42,7 +42,10 @@
                 <span><%= role.codigo %> · <%= role.participantes %> participantes · <%= role.avaliacoes %> avaliações</span>
                 <span><%= role.expirado ? 'Encerrado' : 'Encerra em ' + role.expiracao_label %></span>
               </div>
-              <a class="small-link" href="/role/<%= role.codigo %>">Abrir</a>
+              <div class="creator-actions">
+                <a class="small-link" href="/role/<%= role.codigo %>">Abrir</a>
+                <a class="small-link" href="/dashboard/role/<%= role.codigo %>">Moderar</a>
+              </div>
             </li>
           <% }) %>
         </ul>

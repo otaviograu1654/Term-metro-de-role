@@ -38,6 +38,8 @@ A primeira versao nao tem parte publica para bares, eventos, mapa, pagamento ou 
 - [x] Fase 21 - Avatar do participante
 - [x] Fase 47 - Avatares com imagens proprias
 - [x] Fase 53 - Preview grande do avatar no celular
+- [x] Fase 40 - Moderacao simples do criador
+- [x] Fase 39 - Participantes ativos
 
 ## Proximas fases
 
@@ -50,8 +52,6 @@ Fases para deixar o app forte como ferramenta privada de grupo antes de virar av
 - [ ] Fase 37 - Decisoes importantes do grupo
 - [ ] Fase 30 - Localizacao do role
 - [ ] Fase 38 - Localizacao em tempo real opcional
-- [ ] Fase 39 - Participantes ativos
-- [ ] Fase 40 - Moderacao simples do criador
 - [ ] Fase 41 - Sessao persistente
 - [ ] Fase 42 - Painel detalhado do role
 - [ ] Fase 48 - Criador de avatar por camadas
@@ -501,6 +501,14 @@ Ideias:
 - separar ativos e inativos;
 - nao mostrar dados sensiveis.
 
+Implementado no MVP:
+
+- participantes veem quem ja entrou no role;
+- lista mostra avatar, nome e ultima interacao;
+- a propria pessoa aparece marcada como "voce";
+- contador total de participantes;
+- a lista so aparece depois que a pessoa entrou no role.
+
 ### Fase 40 - Moderacao simples do criador
 
 Permitir ao criador controlar o role durante o uso.
@@ -512,6 +520,16 @@ Funcoes:
 - remover participante problemático;
 - limpar historico do role;
 - copiar link rapidamente.
+
+Implementado no MVP:
+
+- pagina de moderacao por role dentro da area do criador;
+- botao para encerrar o role manualmente;
+- botao para reabrir quando ainda estiver dentro das 24 horas;
+- lista de participantes com avatar, avaliacoes e ultima interacao;
+- remover participante e as avaliacoes dele;
+- remover avaliacao/sinal individual;
+- acessar o link publico do role pela tela de moderacao.
 
 ### Fase 41 - Sessao persistente
 

@@ -69,18 +69,21 @@ const FORCE_ANONYMOUS_STATUSES = [
 const AVATAR_OPTIONS = [
   { id: 'barbudo', label: 'Avatar 1', image: '/imagens/barbudo.png' },
   { id: 'branca-cacheada', label: 'Avatar 2', image: '/imagens/brancacacheada.png' },
-  { id: 'branco-degrade', label: 'Avatar 3', image: '/imagens/brancodegrade.png' },
-  { id: 'branco-old-money', label: 'Avatar 4', image: '/imagens/brancooldmoney.png' },
-  { id: 'cabelo-preto-liso', label: 'Avatar 5', image: '/imagens/cabelopretoliso.png' },
-  { id: 'cavanhaque', label: 'Avatar 6', image: '/imagens/cavanhaque.png' },
-  { id: 'japinha', label: 'Avatar 7', image: '/imagens/japinha.png' },
-  { id: 'japones', label: 'Avatar 8', image: '/imagens/japones.png' },
-  { id: 'loira-olhos-claros', label: 'Avatar 9', image: '/imagens/loiraolhosclaros.png' },
-  { id: 'morena-cacheada', label: 'Avatar 10', image: '/imagens/morenacacheada.png' },
-  { id: 'morena-liso', label: 'Avatar 11', image: '/imagens/morenaliso.png' },
-  { id: 'moreno-barbudo', label: 'Avatar 12', image: '/imagens/morenobarbudo.png' },
-  { id: 'moreno-bigodin', label: 'Avatar 13', image: '/imagens/morenobigodin.png' },
-  { id: 'ruiva', label: 'Avatar 14', image: '/imagens/ruiva.png' }
+  { id: 'branca-luzes', label: 'Avatar 3', image: '/imagens/brancaluzes.png' },
+  { id: 'branco-degrade', label: 'Avatar 4', image: '/imagens/brancodegrade.png' },
+  { id: 'branco-old-money', label: 'Avatar 5', image: '/imagens/brancooldmoney.png' },
+  { id: 'cabelo-preto-liso', label: 'Avatar 6', image: '/imagens/cabelopretoliso.png' },
+  { id: 'cavanhaque', label: 'Avatar 7', image: '/imagens/cavanhaque.png' },
+  { id: 'japinha', label: 'Avatar 8', image: '/imagens/japinha.png' },
+  { id: 'japones', label: 'Avatar 9', image: '/imagens/japones.png' },
+  { id: 'loira-olhos-claros', label: 'Avatar 10', image: '/imagens/loiraolhosclaros.png' },
+  { id: 'loira-tingida', label: 'Avatar 11', image: '/imagens/loiratingida.png' },
+  { id: 'morena-cacheada', label: 'Avatar 12', image: '/imagens/morenacacheada.png' },
+  { id: 'morena-liso', label: 'Avatar 13', image: '/imagens/morenaliso.png' },
+  { id: 'morena-luzes', label: 'Avatar 14', image: '/imagens/morenaluzes.png' },
+  { id: 'moreno-barbudo', label: 'Avatar 15', image: '/imagens/morenobarbudo.png' },
+  { id: 'moreno-bigodin', label: 'Avatar 16', image: '/imagens/morenobigodin.png' },
+  { id: 'ruiva', label: 'Avatar 17', image: '/imagens/ruiva.png' }
 ];
 
 const databaseUrl = process.env.DATABASE_URL || '';
@@ -205,9 +208,124 @@ async function getCreatorRoles() {
   });
 }
 
+async function getCreatorRoleDetails(codigo) {
+  const role = await findRoleByCode(codigo);
+
+  if (!role) {
+    return null;
+  }
+
+  const participantesResult = await query(`
+    SELECT
+      p.id,
+      p.nome,
+      p.avatar,
+      p.criado_em,
+      COUNT(v.id)::int AS avaliacoes,
+      MAX(v.criado_em) AS ultima_interacao
+    FROM participantes p
+    LEFT JOIN votos v ON v.participante_id = p.id
+    WHERE p.role_id = $1
+    GROUP BY p.id
+    ORDER BY p.criado_em ASC
+  `, [role.id]);
+
+  const votosResult = await query(`
+    SELECT
+      v.id,
+      v.nota,
+      v.status,
+      v.comentario,
+      v.anonimo,
+      v.criado_em,
+      p.nome AS participante_nome,
+      p.avatar AS participante_avatar,
+      COUNT(sr.id)::int AS respostas
+    FROM votos v
+    JOIN participantes p ON p.id = v.participante_id
+    LEFT JOIN sinal_respostas sr ON sr.voto_id = v.id
+    WHERE v.role_id = $1
+    GROUP BY v.id, p.nome, p.avatar
+    ORDER BY v.criado_em DESC, v.id DESC
+    LIMIT 40
+  `, [role.id]);
+
+  const expiration = getRoleExpiration(role);
+
+  return {
+    role: {
+      ...role,
+      criado_em_label: formatDateTime(role.criado_em),
+      expiracao_label: expiration.expiresAtLabel,
+      expirado: expiration.isExpired
+    },
+    participantes: participantesResult.rows.map((participante) => ({
+      ...participante,
+      criado_em_label: formatDateTime(participante.criado_em),
+      ultima_interacao_label: participante.ultima_interacao
+        ? formatDateTime(participante.ultima_interacao)
+        : 'Sem avaliacao ainda'
+    })),
+    votos: votosResult.rows.map((voto) => ({
+      ...voto,
+      horario: formatDateTime(voto.criado_em)
+    }))
+  };
+}
+
+async function getRoleParticipants(roleId) {
+  const result = await query(`
+    SELECT
+      p.id,
+      p.nome,
+      p.avatar,
+      p.criado_em,
+      MAX(v.criado_em) AS ultima_interacao,
+      COUNT(v.id)::int AS avaliacoes
+    FROM participantes p
+    LEFT JOIN votos v ON v.participante_id = p.id
+    WHERE p.role_id = $1
+    GROUP BY p.id
+    ORDER BY p.criado_em ASC
+  `, [roleId]);
+
+  return result.rows.map((participante) => ({
+    ...participante,
+    entrou_em_label: formatDateTime(participante.criado_em),
+    ultima_interacao_label: participante.ultima_interacao
+      ? formatDateTime(participante.ultima_interacao)
+      : 'Ainda nao avaliou'
+  }));
+}
+
 function getSessionParticipant(req, roleId) {
   const current = req.session.roles && req.session.roles[String(roleId)];
   return current || null;
+}
+
+async function ensureSessionParticipant(req, roleId) {
+  const participante = getSessionParticipant(req, roleId);
+
+  if (!participante) {
+    return null;
+  }
+
+  const result = await query(
+    'SELECT id, nome, avatar FROM participantes WHERE role_id = $1 AND id = $2',
+    [roleId, participante.participante_id]
+  );
+
+  if (result.rowCount === 0) {
+    delete req.session.roles[String(roleId)];
+    return null;
+  }
+
+  return {
+    role_id: roleId,
+    participante_id: result.rows[0].id,
+    participante_nome: result.rows[0].nome,
+    participante_avatar: result.rows[0].avatar
+  };
 }
 
 function saveSessionParticipant(req, roleId, participante) {
@@ -597,6 +715,113 @@ app.get('/dashboard', requireCreator, async (req, res) => {
   }
 });
 
+app.get('/dashboard/role/:codigo', requireCreator, async (req, res) => {
+  const codigo = req.params.codigo.toUpperCase();
+
+  try {
+    const details = await getCreatorRoleDetails(codigo);
+
+    if (!details) {
+      return renderError(res, 'Role nao encontrado.', 404);
+    }
+
+    return res.render('dashboard_role', {
+      ...details,
+      avatarOptions: AVATAR_OPTIONS,
+      aviso: consumeFlash(req)
+    });
+  } catch (error) {
+    console.error(error);
+    return renderError(res, 'Nao foi possivel carregar a moderacao agora.', 500);
+  }
+});
+
+app.post('/dashboard/role/:codigo/encerrar', requireCreator, async (req, res) => {
+  const codigo = req.params.codigo.toUpperCase();
+
+  try {
+    const role = await findRoleByCode(codigo);
+
+    if (!role) {
+      return renderError(res, 'Role nao encontrado.', 404);
+    }
+
+    await query('UPDATE roles SET encerrado = TRUE WHERE id = $1', [role.id]);
+    setFlash(req, 'Role encerrado. Ninguem novo entra ou vota agora.');
+    return res.redirect(`/dashboard/role/${role.codigo}`);
+  } catch (error) {
+    console.error(error);
+    return renderError(res, 'Nao foi possivel encerrar o role agora.', 500);
+  }
+});
+
+app.post('/dashboard/role/:codigo/reabrir', requireCreator, async (req, res) => {
+  const codigo = req.params.codigo.toUpperCase();
+
+  try {
+    const role = await findRoleByCode(codigo);
+
+    if (!role) {
+      return renderError(res, 'Role nao encontrado.', 404);
+    }
+
+    await query('UPDATE roles SET encerrado = FALSE WHERE id = $1', [role.id]);
+    setFlash(req, 'Role reaberto se ainda estiver dentro das 24 horas.');
+    return res.redirect(`/dashboard/role/${role.codigo}`);
+  } catch (error) {
+    console.error(error);
+    return renderError(res, 'Nao foi possivel reabrir o role agora.', 500);
+  }
+});
+
+app.post('/dashboard/role/:codigo/participante/:participanteId/remover', requireCreator, async (req, res) => {
+  const codigo = req.params.codigo.toUpperCase();
+  const participanteId = Number(req.params.participanteId);
+
+  try {
+    const role = await findRoleByCode(codigo);
+
+    if (!role) {
+      return renderError(res, 'Role nao encontrado.', 404);
+    }
+
+    if (!Number.isInteger(participanteId)) {
+      return renderError(res, 'Participante invalido.');
+    }
+
+    await query('DELETE FROM participantes WHERE role_id = $1 AND id = $2', [role.id, participanteId]);
+    setFlash(req, 'Participante removido junto com as avaliacoes dele.');
+    return res.redirect(`/dashboard/role/${role.codigo}`);
+  } catch (error) {
+    console.error(error);
+    return renderError(res, 'Nao foi possivel remover esse participante agora.', 500);
+  }
+});
+
+app.post('/dashboard/role/:codigo/voto/:votoId/remover', requireCreator, async (req, res) => {
+  const codigo = req.params.codigo.toUpperCase();
+  const votoId = Number(req.params.votoId);
+
+  try {
+    const role = await findRoleByCode(codigo);
+
+    if (!role) {
+      return renderError(res, 'Role nao encontrado.', 404);
+    }
+
+    if (!Number.isInteger(votoId)) {
+      return renderError(res, 'Avaliacao invalida.');
+    }
+
+    await query('DELETE FROM votos WHERE role_id = $1 AND id = $2', [role.id, votoId]);
+    setFlash(req, 'Avaliacao ou sinal removido.');
+    return res.redirect(`/dashboard/role/${role.codigo}`);
+  } catch (error) {
+    console.error(error);
+    return renderError(res, 'Nao foi possivel remover essa avaliacao agora.', 500);
+  }
+});
+
 app.post('/roles', requireCreator, async (req, res) => {
   const nome = normalizeName(req.body.nome, 100);
 
@@ -624,9 +849,10 @@ app.get('/role/:codigo', async (req, res) => {
       return renderError(res, 'Role nao encontrado.', 404);
     }
 
-    const participante = getSessionParticipant(req, role.id);
+    const participante = await ensureSessionParticipant(req, role.id);
     const latestVotes = await getLatestVotes(role.id);
     const recentes = await getRecentVotes(role.id, participante && participante.participante_id);
+    const participantes = participante ? await getRoleParticipants(role.id) : [];
     const termometro = calculateThermometer(latestVotes);
     const shareUrl = `${req.protocol}://${req.get('host')}/role/${role.codigo}`;
     const expiration = getRoleExpiration(role);
@@ -634,7 +860,9 @@ app.get('/role/:codigo', async (req, res) => {
     return res.render('role', {
       role,
       participante,
+      participantes,
       expiration,
+      creatorLoggedIn: isCreatorLoggedIn(req),
       aviso: consumeFlash(req),
       statusList: STATUS_LIST,
       sensitiveStatuses: SENSITIVE_STATUSES,
@@ -705,7 +933,7 @@ app.post('/role/:codigo/votar', async (req, res) => {
       return renderError(res, 'Este role ja encerrou e nao aceita novos votos.', 403);
     }
 
-    const participante = getSessionParticipant(req, role.id);
+    const participante = await ensureSessionParticipant(req, role.id);
 
     if (!participante || participante.role_id !== role.id) {
       return renderError(res, 'Entre no role antes de votar.', 403);
@@ -782,7 +1010,7 @@ app.post('/role/:codigo/sinal/:votoId/responder', async (req, res) => {
       return renderError(res, 'Este role ja encerrou e nao aceita novas interacoes.', 403);
     }
 
-    const participante = getSessionParticipant(req, role.id);
+    const participante = await ensureSessionParticipant(req, role.id);
 
     if (!participante || participante.role_id !== role.id) {
       return renderError(res, 'Entre no role antes de responder.', 403);
@@ -840,7 +1068,7 @@ app.post('/role/:codigo/sugestao/:sugestaoId/votar', async (req, res) => {
       return renderError(res, 'Este role ja encerrou e nao aceita novas interacoes.', 403);
     }
 
-    const participante = getSessionParticipant(req, role.id);
+    const participante = await ensureSessionParticipant(req, role.id);
 
     if (!participante || participante.role_id !== role.id) {
       return renderError(res, 'Entre no role antes de votar em sugestoes.', 403);
