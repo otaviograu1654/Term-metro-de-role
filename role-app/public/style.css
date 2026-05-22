@@ -390,16 +390,15 @@ input[type="password"]:focus {
 
 .avatar-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 8px;
 }
 
 .avatar-option {
   display: grid;
-  gap: 4px;
   place-items: center;
-  min-height: 128px;
-  padding: 10px;
+  min-height: 112px;
+  padding: 8px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: #151a22;
@@ -425,26 +424,49 @@ input[type="password"]:focus {
 }
 
 .avatar-img {
-  width: 72px;
-  height: 72px;
+  width: 84px;
+  height: 84px;
   border-radius: 999px;
   object-fit: cover;
   border: 2px solid rgba(255, 255, 255, 0.08);
   background: #10141a;
 }
 
-.person-title {
-  display: inline-flex;
+.profile-strip {
+  display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
+  padding: 10px;
+  margin-bottom: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #151a22;
 }
 
-.avatar-mini {
-  width: 34px;
-  height: 34px;
+.profile-strip span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.profile-strip strong {
+  display: block;
+  color: var(--text);
+  font-size: 1.02rem;
+}
+
+.avatar-profile {
+  width: 54px;
+  height: 54px;
   border-radius: 999px;
   object-fit: cover;
   background: #10141a;
+}
+
+.avatar-profile-fallback {
+  display: grid;
+  place-items: center;
+  font-size: 1.8rem;
 }
 
 .activity-person {
@@ -460,6 +482,45 @@ input[type="password"]:focus {
   border-radius: 999px;
   object-fit: cover;
   background: #10141a;
+}
+
+.avatar-preview {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: none;
+  place-items: center;
+  padding: 24px;
+  background: rgba(6, 8, 12, 0.82);
+  backdrop-filter: blur(10px);
+}
+
+.avatar-preview.is-open {
+  display: grid;
+}
+
+.avatar-preview img {
+  width: min(78vw, 320px);
+  height: min(78vw, 320px);
+  border-radius: 999px;
+  object-fit: cover;
+  border: 4px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.44);
+}
+
+.avatar-preview-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: #151a22;
+  color: var(--text);
+  font-size: 1.8rem;
+  line-height: 1;
+  cursor: pointer;
 }
 
 .is-hidden {

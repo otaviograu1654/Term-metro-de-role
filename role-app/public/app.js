@@ -9,6 +9,9 @@ const scoreInput = document.querySelector('#nota');
 const scoreOutput = document.querySelector('#scoreOutput');
 const commentBox = document.querySelector('#commentBox');
 const commentInput = document.querySelector('#comentario');
+const avatarPreview = document.querySelector('#avatarPreview');
+const avatarPreviewImage = document.querySelector('#avatarPreviewImage');
+const avatarPreviewClose = document.querySelector('#avatarPreviewClose');
 
 if (copyButton && shareInput) {
   copyButton.addEventListener('click', async () => {
@@ -64,6 +67,44 @@ if (voteForm && anonymousInput && statusInput) {
       if (!canComment) {
         commentInput.value = '';
       }
+    }
+  });
+}
+
+if (avatarPreview && avatarPreviewImage) {
+  document.querySelectorAll('.avatar-option').forEach((option) => {
+    option.addEventListener('click', () => {
+      const image = option.querySelector('.avatar-img');
+
+      if (!image) {
+        return;
+      }
+
+      avatarPreviewImage.src = image.src;
+      avatarPreview.classList.add('is-open');
+      avatarPreview.setAttribute('aria-hidden', 'false');
+    });
+  });
+
+  const closeAvatarPreview = () => {
+    avatarPreview.classList.remove('is-open');
+    avatarPreview.setAttribute('aria-hidden', 'true');
+    avatarPreviewImage.src = '';
+  };
+
+  avatarPreview.addEventListener('click', (event) => {
+    if (event.target === avatarPreview) {
+      closeAvatarPreview();
+    }
+  });
+
+  if (avatarPreviewClose) {
+    avatarPreviewClose.addEventListener('click', closeAvatarPreview);
+  }
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && avatarPreview.classList.contains('is-open')) {
+      closeAvatarPreview();
     }
   });
 }

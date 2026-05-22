@@ -37,6 +37,7 @@ A primeira versao nao tem parte publica para bares, eventos, mapa, pagamento ou 
 - [x] Fase 27 - Controle de criacao de roles
 - [x] Fase 21 - Avatar do participante
 - [x] Fase 47 - Avatares com imagens proprias
+- [x] Fase 53 - Preview grande do avatar no celular
 
 ## Proximas fases
 
@@ -54,6 +55,8 @@ Fases para deixar o app forte como ferramenta privada de grupo antes de virar av
 - [ ] Fase 41 - Sessao persistente
 - [ ] Fase 42 - Painel detalhado do role
 - [ ] Fase 48 - Criador de avatar por camadas
+- [ ] Fase 54 - Repertorio novo de sinais e frases
+- [ ] Fase 55 - Resultado divertido das votacoes
 
 ### MVP funcional e expansao
 
@@ -851,6 +854,83 @@ nao mostrar dados pessoais;
 preservar anonimato dos participantes;
 nao salvar localizacao privada de after;
 manter foco em leitura coletiva do role.
+
+Fase 53 - Preview grande do avatar no celular
+
+Melhorar a escolha do avatar no mobile.
+
+Implementado:
+
+- remover nomes visiveis dos avatares na tela de entrada;
+- manter nomes internos neutros como `Avatar 1`, `Avatar 2`;
+- ao tocar em um avatar, abrir a imagem maior na tela;
+- permitir fechar tocando fora, no botao de fechar ou com `Esc`;
+- mostrar um mini perfil na tela de nota e comentario com avatar e nome do participante.
+
+Fase 54 - Repertorio novo de sinais e frases
+
+Revisar as frases do app para ficarem mais naturais, menos genericas e mais com cara de grupo em role.
+
+Ideias de sinais novos:
+
+- Divou
+- Paia
+- Deu bom
+- Deu ruim
+- Flopou
+- Salvou o role
+- Ta rendendo
+- Ta estranho
+- Bora pista
+- Bora mesa
+- Bora beber agua
+- Cadê geral?
+- Perdi o bonde
+- Alguem viu meu copo?
+- Precisamos reagrupar
+- Bateu fome
+- Quero sentar
+- Musica salvou
+- DJ ta devendo
+- Fila ta osso
+- Role ta caro
+- Energia subiu
+- Energia caiu
+- After ou cama?
+
+Ideias por categoria:
+
+- Clima bom: Divou, Deu bom, Ta rendendo, Salvou o role
+- Clima ruim: Paia, Flopou, Ta estranho, Energia caiu
+- Logistica: Cadê geral?, Precisamos reagrupar, Fila ta osso, Bora mesa
+- Cuidado: Bora beber agua, Quero sentar, Ta desconfortavel
+- After: After ou cama?, Onde e o after?, Bora achar after
+
+Importante:
+
+- frases continuam sem interferir na nota;
+- evitar termos que possam soar ofensivos ou rotular pessoas;
+- preferir frases curtas que cabem bem no botao.
+
+Fase 55 - Resultado divertido das votacoes
+
+Adicionar uma leitura mais divertida quando uma votacao rapida tiver resultado.
+
+Exemplos:
+
+- Se "Bora" ganhar em "Vamo pra outro lugar": mostrar "Divou, partiu outro canto"
+- Se "Vamo ficar mais" ganhar: mostrar "Paia pra fuga, geral quis ficar"
+- Se "Bora achar" ganhar em after: mostrar "Divou, after autorizado"
+- Se "Todo mundo ir dormir e o after" ganhar: mostrar "Fim de expediente"
+- Se "Vamo" ganhar em bebida: mostrar "Rodada liberada"
+- Se "Agora nao, irmao" ganhar: mostrar "Segura a sede"
+
+Regras:
+
+- resultado aparece so depois de votos suficientes ou fim do prazo;
+- nao mostrar quem votou;
+- nao mudar a nota do termometro;
+- usar textos leves, sem expor ninguem.
 
 ## Observacoes de produto
 

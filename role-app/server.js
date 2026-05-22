@@ -67,20 +67,20 @@ const FORCE_ANONYMOUS_STATUSES = [
 ];
 
 const AVATAR_OPTIONS = [
-  { id: 'barbudo', label: 'Barbudo', image: '/imagens/barbudo.png' },
-  { id: 'branca-cacheada', label: 'Branca cacheada', image: '/imagens/brancacacheada.png' },
-  { id: 'branco-degrade', label: 'Branco degradê', image: '/imagens/brancodegrade.png' },
-  { id: 'branco-old-money', label: 'Branco old money', image: '/imagens/brancooldmoney.png' },
-  { id: 'cabelo-preto-liso', label: 'Cabelo preto liso', image: '/imagens/cabelopretoliso.png' },
-  { id: 'cavanhaque', label: 'Cavanhaque', image: '/imagens/cavanhaque.png' },
-  { id: 'japinha', label: 'Japinha', image: '/imagens/japinha.png' },
-  { id: 'japones', label: 'Japonês', image: '/imagens/japones.png' },
-  { id: 'loira-olhos-claros', label: 'Loira olhos claros', image: '/imagens/loiraolhosclaros.png' },
-  { id: 'morena-cacheada', label: 'Morena cacheada', image: '/imagens/morenacacheada.png' },
-  { id: 'morena-liso', label: 'Morena cabelo liso', image: '/imagens/morenaliso.png' },
-  { id: 'moreno-barbudo', label: 'Moreno barbudo', image: '/imagens/morenobarbudo.png' },
-  { id: 'moreno-bigodin', label: 'Moreno bigodin', image: '/imagens/morenobigodin.png' },
-  { id: 'ruiva', label: 'Ruiva', image: '/imagens/ruiva.png' }
+  { id: 'barbudo', label: 'Avatar 1', image: '/imagens/barbudo.png' },
+  { id: 'branca-cacheada', label: 'Avatar 2', image: '/imagens/brancacacheada.png' },
+  { id: 'branco-degrade', label: 'Avatar 3', image: '/imagens/brancodegrade.png' },
+  { id: 'branco-old-money', label: 'Avatar 4', image: '/imagens/brancooldmoney.png' },
+  { id: 'cabelo-preto-liso', label: 'Avatar 5', image: '/imagens/cabelopretoliso.png' },
+  { id: 'cavanhaque', label: 'Avatar 6', image: '/imagens/cavanhaque.png' },
+  { id: 'japinha', label: 'Avatar 7', image: '/imagens/japinha.png' },
+  { id: 'japones', label: 'Avatar 8', image: '/imagens/japones.png' },
+  { id: 'loira-olhos-claros', label: 'Avatar 9', image: '/imagens/loiraolhosclaros.png' },
+  { id: 'morena-cacheada', label: 'Avatar 10', image: '/imagens/morenacacheada.png' },
+  { id: 'morena-liso', label: 'Avatar 11', image: '/imagens/morenaliso.png' },
+  { id: 'moreno-barbudo', label: 'Avatar 12', image: '/imagens/morenobarbudo.png' },
+  { id: 'moreno-bigodin', label: 'Avatar 13', image: '/imagens/morenobigodin.png' },
+  { id: 'ruiva', label: 'Avatar 14', image: '/imagens/ruiva.png' }
 ];
 
 const databaseUrl = process.env.DATABASE_URL || '';
