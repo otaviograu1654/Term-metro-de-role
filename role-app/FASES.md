@@ -459,6 +459,25 @@ idealmente a pessoa vota antes de continuar usando o role.
 
 Essa fase e diferente dos sinais rapidos: ela funciona como uma decisao coletiva do grupo.
 
+Tambem entra nessa fase a camada de informacoes uteis do role, para dar mais contexto ao grupo:
+
+- quantas pessoas entraram;
+- quantas avaliaram;
+- ultima atualizacao;
+- status do role como "comecando", "rendendo", "caindo" ou "partiu after";
+- decisao ativa em destaque;
+- aviso fixado pelo criador;
+- localizacao e endereco quando a Fase 30 entrar;
+- regras do role;
+- convite mais bonito para copiar ou mandar no WhatsApp;
+- historico resumido da noite.
+
+Observacao sobre WhatsApp:
+
+- o app pode gerar link para compartilhar o convite no WhatsApp;
+- tambem pode guardar um link de grupo colado pelo criador no futuro;
+- criar grupo automaticamente nao e uma boa para o MVP e pode tirar parte da utilidade do app.
+
 
 
 ### Fase 38 - Localizacao em tempo real opcional

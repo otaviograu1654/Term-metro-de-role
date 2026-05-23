@@ -23,6 +23,7 @@
         <input id="shareLink" type="text" value="<%= shareUrl %>" readonly>
         <button type="button" id="copyLinkButton" class="small-button">Copiar link</button>
       </div>
+      <a class="whatsapp-button" href="<%= whatsappShareUrl %>" target="_blank" rel="noopener">Mandar no WhatsApp</a>
       <p class="expires-text">Encerra em <%= expiration.expiresAtLabel %></p>
       <p id="copyFeedback" class="feedback" aria-live="polite"></p>
     </section>
@@ -64,6 +65,19 @@
         </form>
       </section>
     <% } else if (participante) { %>
+      <% const avatarParticipante = avatarOptions.find(function(a) { return a.id === participante.participante_avatar; }); %>
+      <section class="profile-card">
+        <% if (avatarParticipante && avatarParticipante.image) { %>
+          <img class="avatar-profile" src="<%= avatarParticipante.image %>" alt="">
+        <% } else if (avatarParticipante && avatarParticipante.icon) { %>
+          <span class="avatar-profile avatar-profile-fallback"><%= avatarParticipante.icon %></span>
+        <% } %>
+        <div>
+          <span>VocÃª estÃ¡ no rolÃª como</span>
+          <strong><%= participante.participante_nome %></strong>
+        </div>
+      </section>
+
       <section class="thermo-card">
         <div class="thermo-top">
           <div>
@@ -117,7 +131,7 @@
           </div>
         </div>
         <% const avatarParticipante = avatarOptions.find(function(a) { return a.id === participante.participante_avatar; }); %>
-        <div class="profile-strip">
+        <div class="profile-strip is-hidden">
           <% if (avatarParticipante && avatarParticipante.image) { %>
             <img class="avatar-profile" src="<%= avatarParticipante.image %>" alt="">
           <% } else if (avatarParticipante && avatarParticipante.icon) { %>
@@ -155,16 +169,32 @@
             <p class="eyebrow">Sinal do rolê</p>
             <span>Opcional, não mexe na nota</span>
           </div>
-          <div class="vote-grid signal-grid">
-            <% statusList.forEach(function(status) { %>
+          <div class="signal-tabs" role="tablist" aria-label="Categorias de sinal">
+            <% statusCategories.forEach(function(category, index) { %>
               <button
-                class="vote-button"
+                class="signal-tab <%= index === 0 ? 'is-active' : '' %>"
                 type="button"
-                data-status="<%= status %>"
-                data-commentable="<%= commentableStatuses.includes(status) ? 'true' : 'false' %>"
-                data-sensitive="<%= sensitiveStatuses.includes(status) ? 'true' : 'false' %>">
-                <%= status %>
+                data-signal-tab="<%= category.id %>">
+                <%= category.label %>
               </button>
+            <% }) %>
+          </div>
+          <div class="signal-panels">
+            <% statusCategories.forEach(function(category, index) { %>
+              <div class="signal-panel <%= index === 0 ? 'is-active' : '' %>" data-signal-panel="<%= category.id %>">
+                <div class="vote-grid signal-grid">
+                  <% category.statuses.forEach(function(status) { %>
+                    <button
+                      class="vote-button"
+                      type="button"
+                      data-status="<%= status %>"
+                      data-commentable="<%= commentableStatuses.includes(status) ? 'true' : 'false' %>"
+                      data-sensitive="<%= sensitiveStatuses.includes(status) ? 'true' : 'false' %>">
+                      <%= status %>
+                    </button>
+                  <% }) %>
+                </div>
+              </div>
             <% }) %>
           </div>
           <div class="comment-box is-hidden" id="commentBox">

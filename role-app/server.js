@@ -42,6 +42,14 @@ const STATUS_LIST = [
   '🚻 Banheiro tá impossível'
 ];
 
+const STATUS_CATEGORIES = [
+  { id: 'clima', label: 'Clima', statuses: STATUS_LIST.slice(0, 6) },
+  { id: 'movimento', label: 'Movimento', statuses: STATUS_LIST.slice(6, 10) },
+  { id: 'bar', label: 'Bar', statuses: STATUS_LIST.slice(10, 14) },
+  { id: 'after', label: 'After', statuses: STATUS_LIST.slice(14, 16) },
+  { id: 'cuidado', label: 'Cuidado', statuses: STATUS_LIST.slice(16) }
+];
+
 const SENSITIVE_STATUSES = [
   '🚶 Quero ir embora',
   '🚪 Embora?',
@@ -855,6 +863,7 @@ app.get('/role/:codigo', async (req, res) => {
     const participantes = participante ? await getRoleParticipants(role.id) : [];
     const termometro = calculateThermometer(latestVotes);
     const shareUrl = `${req.protocol}://${req.get('host')}/role/${role.codigo}`;
+    const whatsappShareUrl = `https://wa.me/?text=${encodeURIComponent(`Entra no role "${role.nome}": ${shareUrl}`)}`;
     const expiration = getRoleExpiration(role);
 
     return res.render('role', {
@@ -865,12 +874,14 @@ app.get('/role/:codigo', async (req, res) => {
       creatorLoggedIn: isCreatorLoggedIn(req),
       aviso: consumeFlash(req),
       statusList: STATUS_LIST,
+      statusCategories: STATUS_CATEGORIES,
       sensitiveStatuses: SENSITIVE_STATUSES,
       commentableStatuses: COMMENTABLE_STATUSES,
       avatarOptions: AVATAR_OPTIONS,
       termometro,
       recentes,
-      shareUrl
+      shareUrl,
+      whatsappShareUrl
     });
   } catch (error) {
     console.error(error);
@@ -1112,4 +1123,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { app, calculateThermometer, STATUS_LIST, formatDateTime, getRoleExpiration, QUICK_POLL_OPTIONS, AVATAR_OPTIONS };
+module.exports = { app, calculateThermometer, STATUS_LIST, STATUS_CATEGORIES, formatDateTime, getRoleExpiration, QUICK_POLL_OPTIONS, AVATAR_OPTIONS };

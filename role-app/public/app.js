@@ -12,6 +12,8 @@ const commentInput = document.querySelector('#comentario');
 const avatarPreview = document.querySelector('#avatarPreview');
 const avatarPreviewImage = document.querySelector('#avatarPreviewImage');
 const avatarPreviewClose = document.querySelector('#avatarPreviewClose');
+const signalTabs = document.querySelectorAll('[data-signal-tab]');
+const signalPanels = document.querySelectorAll('[data-signal-panel]');
 
 if (copyButton && shareInput) {
   copyButton.addEventListener('click', async () => {
@@ -68,6 +70,22 @@ if (voteForm && anonymousInput && statusInput) {
         commentInput.value = '';
       }
     }
+  });
+}
+
+if (signalTabs.length > 0 && signalPanels.length > 0) {
+  signalTabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.signalTab;
+
+      signalTabs.forEach((item) => {
+        item.classList.toggle('is-active', item === tab);
+      });
+
+      signalPanels.forEach((panel) => {
+        panel.classList.toggle('is-active', panel.dataset.signalPanel === target);
+      });
+    });
   });
 }
 
