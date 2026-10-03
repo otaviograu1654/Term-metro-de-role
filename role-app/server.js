@@ -157,6 +157,26 @@ function normalizeName(value, maxLength) {
   return String(value || '').trim().slice(0, maxLength);
 }
 
+function normalizeUrl(value) {
+  const url = String(value || '').trim();
+
+  if (!url) {
+    return null;
+  }
+
+  try {
+    const parsed = new URL(url);
+
+    if (!['http:', 'https:'].includes(parsed.protocol)) {
+      return null;
+    }
+
+    return parsed.toString().slice(0, 500);
+  } catch (error) {
+    return null;
+  }
+}
+
 function generateCode() {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let code = '';
@@ -189,11 +209,7 @@ async function findRoleByCode(codigo) {
 async function getCreatorRoles() {
   const result = await query(`
     SELECT
-      r.id,
-      r.codigo,
-      r.nome,
-      r.criado_em,
-      r.encerrado,
+      r.*,
       COUNT(DISTINCT p.id)::int AS participantes,
       COUNT(v.id)::int AS avaliacoes
     FROM roles r
@@ -832,14 +848,30 @@ app.post('/dashboard/role/:codigo/voto/:votoId/remover', requireCreator, async (
 
 app.post('/roles', requireCreator, async (req, res) => {
   const nome = normalizeName(req.body.nome, 100);
+  const descricao = normalizeName(req.body.descricao, 280) || null;
+  const tipoRole = normalizeName(req.body.tipo_role, 40) || null;
+  const regras = normalizeName(req.body.regras, 700) || null;
+  const avisoFixado = normalizeName(req.body.aviso_fixado, 180) || null;
+  const localNome = normalizeName(req.body.local_nome, 120) || null;
+  const endereco = normalizeName(req.body.endereco, 180) || null;
+  const mapsUrl = normalizeUrl(req.body.maps_url);
 
   if (!nome) {
     return renderError(res, 'Digite um nome para criar o role.');
   }
 
+  if (String(req.body.maps_url || '').trim() && !mapsUrl) {
+    return renderError(res, 'Cole um link valido do Google Maps, comecando com http ou https.');
+  }
+
   try {
     const codigo = await createUniqueCode();
-    await query('INSERT INTO roles (codigo, nome) VALUES ($1, $2)', [codigo, nome]);
+    await query(
+      `INSERT INTO roles
+        (codigo, nome, descricao, tipo_role, regras, aviso_fixado, local_nome, endereco, maps_url)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+      [codigo, nome, descricao, tipoRole, regras, avisoFixado, localNome, endereco, mapsUrl]
+    );
     return res.redirect(`/role/${codigo}`);
   } catch (error) {
     console.error(error);

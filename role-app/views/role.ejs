@@ -28,6 +28,44 @@
       <p id="copyFeedback" class="feedback" aria-live="polite"></p>
     </section>
 
+    <% if (role.descricao || role.tipo_role || role.regras || role.aviso_fixado) { %>
+      <section class="card invite-card">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Convite do role</p>
+            <h2><%= role.tipo_role || 'Informacoes' %></h2>
+          </div>
+        </div>
+        <% if (role.aviso_fixado) { %>
+          <p class="pinned-note"><%= role.aviso_fixado %></p>
+        <% } %>
+        <% if (role.descricao) { %>
+          <p><%= role.descricao %></p>
+        <% } %>
+        <% if (role.regras) { %>
+          <div class="rules-box">
+            <strong>Regras e observacoes</strong>
+            <p><%= role.regras %></p>
+          </div>
+        <% } %>
+      </section>
+    <% } %>
+
+    <% if (role.local_nome || role.endereco || role.maps_url) { %>
+      <section class="card location-card">
+        <p class="eyebrow">Local do role</p>
+        <% if (role.local_nome) { %>
+          <h2><%= role.local_nome %></h2>
+        <% } %>
+        <% if (role.endereco) { %>
+          <p><%= role.endereco %></p>
+        <% } %>
+        <% if (role.maps_url) { %>
+          <a class="map-button" href="<%= role.maps_url %>" target="_blank" rel="noopener">Abrir no Maps</a>
+        <% } %>
+      </section>
+    <% } %>
+
     <% if (typeof aviso !== 'undefined' && aviso) { %>
       <section class="toast-card" role="status">
         <p><%= aviso %></p>

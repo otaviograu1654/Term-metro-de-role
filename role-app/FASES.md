@@ -6,7 +6,7 @@ O `role-app` e um MVP web responsivo para grupos privados medirem o clima de um 
 
 A primeira versao nao tem parte publica para bares, eventos, mapa, pagamento ou app nativo. A ideia agora e validar o uso em grupos pequenos antes de abrir para estabelecimentos ou eventos publicos.
 
-## Fases finalizadas em ordem real
+## Fases finalizadas em ordem crescente
 
 - [x] Fase 1 - Configuracao base
 - [x] Fase 2 - Banco PostgreSQL/Supabase
@@ -22,55 +22,48 @@ A primeira versao nao tem parte publica para bares, eventos, mapa, pagamento ou 
 - [x] Fase 12 - README
 - [x] Fase 13 - Base pronta para Render
 - [x] Fase 14 - Teste final local com Supabase
-- [x] Fase 22 - Trava de voto por intervalo preparada
-- [x] Fase 23 - Historico e horarios
+- [x] Fase 15 - Publicar no Render
 - [x] Fase 17 - Redesenhar o termometro
 - [x] Fase 18 - Separar frases do termometro
 - [x] Fase 19 - Nova tela de avaliacao
 - [x] Fase 20 - Repertorio de frases
-- [x] Fase 32 - Sinais com votacao rapida
-- [x] Fase 31 - Expiracao automatica do role em 24h
-- [x] Fase 33 - Comentario curto em sinais especiais
-- [x] Fase 34 - Sinais de seguranca e privacidade
+- [x] Fase 21 - Avatar do participante
+- [x] Fase 22 - Trava de voto por intervalo preparada
+- [x] Fase 23 - Historico e horarios
 - [x] Fase 25 - Login do criador
 - [x] Fase 26 - Area do criador
 - [x] Fase 27 - Controle de criacao de roles
-- [x] Fase 21 - Avatar do participante
+- [x] Fase 30 - Localizacao do role
+- [x] Fase 31 - Expiracao automatica do role em 24h
+- [x] Fase 32 - Sinais com votacao rapida
+- [x] Fase 33 - Comentario curto em sinais especiais
+- [x] Fase 34 - Sinais de seguranca e privacidade
+- [x] Fase 36 - Configuracoes do role
+- [x] Fase 39 - Participantes ativos
+- [x] Fase 40 - Moderacao simples do criador
 - [x] Fase 47 - Avatares com imagens proprias
 - [x] Fase 53 - Preview grande do avatar no celular
-- [x] Fase 40 - Moderacao simples do criador
-- [x] Fase 39 - Participantes ativos
 
-## Proximas fases
+## Proximas fases em ordem crescente
 
-### MVP de grupo interno
+As fases de grupo interno deixam o app forte como ferramenta privada. As fases de expansao deixam o produto pronto para dominio, pagamento e, depois, avaliacao de lugares.
 
-Fases para deixar o app forte como ferramenta privada de grupo antes de virar avaliacao publica de lugares.
-
-- [ ] Fase 24 - Seguranca base
-- [ ] Fase 36 - Configuracoes do role
-- [ ] Fase 37 - Decisoes importantes do grupo
-- [ ] Fase 30 - Localizacao do role
-- [ ] Fase 38 - Localizacao em tempo real opcional
-- [ ] Fase 41 - Sessao persistente
-- [ ] Fase 42 - Painel detalhado do role
-- [ ] Fase 48 - Criador de avatar por camadas
-- [ ] Fase 54 - Repertorio novo de sinais e frases
-- [ ] Fase 55 - Resultado divertido das votacoes
-
-### MVP funcional e expansao
-
-Fases para deixar o produto pronto para uso mais amplo, dominio, pagamento e, depois, avaliacao de lugares.
-
-- [ ] Fase 15 - Publicar no Render
 - [ ] Fase 16 - Dominio proprio
+- [ ] Fase 24 - Seguranca base
 - [ ] Fase 28 - Pagamento e planos
 - [ ] Fase 29 - Modo pub e ambiente fechado
 - [ ] Fase 35 - Vitrine de roles com previa
+- [ ] Fase 37 - Decisoes importantes do grupo
+- [ ] Fase 38 - Localizacao em tempo real opcional
+- [ ] Fase 41 - Sessao persistente
+- [ ] Fase 42 - Painel detalhado do role
 - [ ] Fase 43 - Roles publicos e privados
 - [ ] Fase 44 - Avaliacao de lugares
 - [ ] Fase 45 - Ranking e pagina de lugar
 - [ ] Fase 46 - Regras comerciais para estabelecimentos
+- [ ] Fase 48 - Criador de avatar por camadas
+- [ ] Fase 54 - Repertorio novo de sinais e frases
+- [ ] Fase 55 - Resultado divertido das votacoes
 
 ## Fases originais
 
@@ -318,6 +311,14 @@ Pontos de atencao:
 - validar links para evitar abuso;
 - deixar a localizacao opcional.
 
+Implementado no MVP:
+
+- campos opcionais ao criar role: local, endereco e link do Google Maps;
+- card de localizacao na pagina do role;
+- link "Abrir no Maps";
+- local aparece tambem no painel e na tela de moderacao;
+- migration `009_localizacao_role.sql` para bancos ja existentes.
+
 
 ### Fase 31 - Expiracao automatica do role
 
@@ -423,6 +424,14 @@ Configuracoes iniciais:
 - encerrar manualmente.
 
 Essa fase deixa o app mais flexivel para testar diferentes tipos de grupo.
+
+Implementado no MVP:
+
+- tipo do role;
+- descricao curta do convite;
+- regras ou observacoes;
+- aviso fixado para aparecer no topo do role;
+- exibicao dessas informacoes no painel, na moderacao e na pagina publica do role.
 
 ### Fase 37 - Decisoes importantes do grupo
 
@@ -692,7 +701,7 @@ Recomendacao:
 - depois evoluir para customizacao por camadas;
 - evitar 3D no MVP interno para nao aumentar muito a complexidade.
 
-Fase 49 - Delay de privacidade nos sinais
+### Fase 49 - Delay de privacidade nos sinais
 
 Criar um atraso proposital para exibicao de sinais e interacoes no role.
 
@@ -733,47 +742,7 @@ nao mostrar ordem exata das interacoes;
 preservar anonimato social do grupo;
 evitar identificacao indireta de participantes.
 
-Fase 49 - Delay de privacidade nos sinais
-
-Criar um atraso proposital para exibicao de sinais e interacoes no role.
-
-Objetivo:
-
-Evitar que participantes descubram quem enviou um sinal observando quem acabou de mexer no celular, principalmente em grupos pequenos.
-
-Funcionamento inicial:
-
-sinais entram em fila antes de aparecer;
-atraso aleatorio entre 1 e 2 minutos;
-sistema nao revela horario exato do envio;
-atualizacao nao acontece imediatamente;
-especialmente importante para sinais sensiveis.
-
-Sinais prioritarios:
-
-To desconfortavel
-Quero ir embora
-Tem uma pessoa me encarando
-
-Possibilidades futuras:
-
-aplicar delay em todos os sinais;
-modo de privacidade reforcada;
-configuracao do delay pelo criador;
-delays diferentes por categoria.
-
-Mensagem sugerida:
-
-“Protecao de anonimato ativa”
-“Alguns sinais podem demorar um pouco para aparecer”
-
-Importante:
-
-nao mostrar “digitando”;
-nao mostrar ordem exata das interacoes;
-preservar anonimato social do grupo;
-evitar identificacao indireta de participantes.
-Fase 50 - Linha do tempo do role
+### Fase 50 - Linha do tempo do role
 
 Criar uma linha do tempo automatica com os acontecimentos mais importantes do role.
 
@@ -812,7 +781,8 @@ nao mostrar quem enviou sinais anonimos;
 nao revelar localizacao do after;
 evitar excesso de eventos irrelevantes;
 priorizar momentos coletivos importantes.
-Fase 51 - Estados do role
+
+### Fase 51 - Estados do role
 
 Criar estados automaticos para representar o clima atual do role.
 
@@ -854,7 +824,8 @@ os estados devem mudar naturalmente;
 evitar mudancas muito bruscas;
 nao depender apenas da nota;
 representar sensacao coletiva do role.
-Fase 52 - Historico e metricas do criador
+
+### Fase 52 - Historico e metricas do criador
 
 Permitir que o criador acompanhe metricas e historicos de roles anteriores.
 
@@ -892,7 +863,7 @@ preservar anonimato dos participantes;
 nao salvar localizacao privada de after;
 manter foco em leitura coletiva do role.
 
-Fase 53 - Preview grande do avatar no celular
+### Fase 53 - Preview grande do avatar no celular
 
 Melhorar a escolha do avatar no mobile.
 
@@ -904,7 +875,7 @@ Implementado:
 - permitir fechar tocando fora, no botao de fechar ou com `Esc`;
 - mostrar um mini perfil na tela de nota e comentario com avatar e nome do participante.
 
-Fase 54 - Repertorio novo de sinais e frases
+### Fase 54 - Repertorio novo de sinais e frases
 
 Revisar as frases do app para ficarem mais naturais, menos genericas e mais com cara de grupo em role.
 
@@ -949,7 +920,7 @@ Importante:
 - evitar termos que possam soar ofensivos ou rotular pessoas;
 - preferir frases curtas que cabem bem no botao.
 
-Fase 55 - Resultado divertido das votacoes
+### Fase 55 - Resultado divertido das votacoes
 
 Adicionar uma leitura mais divertida quando uma votacao rapida tiver resultado.
 

@@ -2,6 +2,13 @@ CREATE TABLE IF NOT EXISTS roles (
   id SERIAL PRIMARY KEY,
   codigo VARCHAR(10) UNIQUE NOT NULL,
   nome VARCHAR(100) NOT NULL,
+  descricao VARCHAR(280),
+  tipo_role VARCHAR(40),
+  regras TEXT,
+  aviso_fixado VARCHAR(180),
+  local_nome VARCHAR(120),
+  endereco VARCHAR(180),
+  maps_url TEXT,
   criado_em TIMESTAMP DEFAULT timezone('America/Sao_Paulo', now()),
   encerrado BOOLEAN DEFAULT FALSE
 );

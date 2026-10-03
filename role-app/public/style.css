@@ -27,7 +27,9 @@ body {
 }
 
 button,
-input {
+input,
+select,
+textarea {
   font: inherit;
 }
 
@@ -92,15 +94,29 @@ label {
   font-weight: 700;
 }
 
-input[type="text"] {
+input[type="text"],
+input[type="url"],
+select,
+textarea {
   width: 100%;
-  min-height: 52px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  padding: 0 14px;
   background: #12161d;
   color: var(--text);
   outline: none;
+}
+
+input[type="text"],
+input[type="url"],
+select {
+  min-height: 52px;
+  padding: 0 14px;
+}
+
+textarea {
+  min-height: 92px;
+  padding: 12px 14px;
+  resize: vertical;
 }
 
 input[type="password"] {
@@ -120,7 +136,10 @@ input[type="range"] {
 }
 
 input[type="text"]:focus,
-input[type="password"]:focus {
+input[type="url"]:focus,
+input[type="password"]:focus,
+select:focus,
+textarea:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(49, 209, 139, 0.16);
 }
@@ -618,6 +637,79 @@ input[type="password"]:focus {
   color: #07100c;
   font-weight: 900;
   text-decoration: none;
+}
+
+.location-card {
+  display: grid;
+  gap: 8px;
+}
+
+.invite-card {
+  display: grid;
+  gap: 10px;
+}
+
+.invite-card p {
+  margin: 0;
+  color: var(--text);
+}
+
+.pinned-note {
+  padding: 10px;
+  border: 1px solid rgba(49, 209, 139, 0.24);
+  border-radius: 8px;
+  background: rgba(49, 209, 139, 0.12);
+  font-weight: 800;
+}
+
+.rules-box {
+  display: grid;
+  gap: 5px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #151a22;
+}
+
+.rules-box p {
+  color: var(--muted);
+}
+
+.location-card h2,
+.location-card p {
+  margin: 0;
+}
+
+.location-card p {
+  color: var(--muted);
+}
+
+.map-button {
+  display: grid;
+  place-items: center;
+  min-height: 42px;
+  margin-top: 4px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #151a22;
+  color: var(--accent);
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.location-summary {
+  display: grid;
+  gap: 4px;
+  margin-top: 12px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #151a22;
+}
+
+.location-summary span {
+  color: var(--muted);
+  font-size: 0.9rem;
 }
 
 .signal-tabs {

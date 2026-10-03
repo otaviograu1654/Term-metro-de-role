@@ -29,6 +29,35 @@
         </div>
       </div>
       <p class="muted-line">Criado em <%= role.criado_em_label %> · Encerra em <%= role.expiracao_label %></p>
+      <% if (role.descricao || role.tipo_role || role.regras || role.aviso_fixado) { %>
+        <div class="location-summary">
+          <% if (role.tipo_role) { %>
+            <strong><%= role.tipo_role %></strong>
+          <% } %>
+          <% if (role.aviso_fixado) { %>
+            <span><%= role.aviso_fixado %></span>
+          <% } %>
+          <% if (role.descricao) { %>
+            <span><%= role.descricao %></span>
+          <% } %>
+          <% if (role.regras) { %>
+            <span><%= role.regras %></span>
+          <% } %>
+        </div>
+      <% } %>
+      <% if (role.local_nome || role.endereco || role.maps_url) { %>
+        <div class="location-summary">
+          <% if (role.local_nome) { %>
+            <strong><%= role.local_nome %></strong>
+          <% } %>
+          <% if (role.endereco) { %>
+            <span><%= role.endereco %></span>
+          <% } %>
+          <% if (role.maps_url) { %>
+            <a class="small-link" href="<%= role.maps_url %>" target="_blank" rel="noopener">Abrir Maps</a>
+          <% } %>
+        </div>
+      <% } %>
       <div class="moderation-actions">
         <a class="small-button neutral-button" href="/role/<%= role.codigo %>">Abrir link</a>
         <% if (role.encerrado) { %>
