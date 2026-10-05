@@ -62,10 +62,12 @@
         <a class="small-button neutral-button" href="/role/<%= role.codigo %>">Abrir link</a>
         <% if (role.encerrado) { %>
           <form action="/dashboard/role/<%= role.codigo %>/reabrir" method="POST">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <button type="submit" class="small-button neutral-button">Reabrir</button>
           </form>
         <% } else { %>
           <form action="/dashboard/role/<%= role.codigo %>/encerrar" method="POST">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <button type="submit" class="small-button danger-button">Encerrar</button>
           </form>
         <% } %>
@@ -96,6 +98,7 @@
                 </div>
               </div>
               <form action="/dashboard/role/<%= role.codigo %>/participante/<%= participante.id %>/remover" method="POST">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <button type="submit" class="icon-danger" aria-label="Remover participante">Remover</button>
               </form>
             </li>
@@ -139,6 +142,7 @@
                 <% } %>
               </div>
               <form action="/dashboard/role/<%= role.codigo %>/voto/<%= voto.id %>/remover" method="POST">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <button type="submit" class="icon-danger" aria-label="Remover avaliacao">Remover</button>
               </form>
             </li>

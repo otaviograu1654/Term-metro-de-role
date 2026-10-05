@@ -43,6 +43,7 @@ A primeira versao nao tem parte publica para bares, eventos, mapa, pagamento ou 
 - [x] Fase 40 - Moderacao simples do criador
 - [x] Fase 47 - Avatares com imagens proprias
 - [x] Fase 53 - Preview grande do avatar no celular
+- [x] Fase 54 - Repertorio novo de sinais e frases (implementacao local)
 
 ## Proximas fases em ordem crescente
 
@@ -62,7 +63,6 @@ As fases de grupo interno deixam o app forte como ferramenta privada. As fases d
 - [ ] Fase 45 - Ranking e pagina de lugar
 - [ ] Fase 46 - Regras comerciais para estabelecimentos
 - [ ] Fase 48 - Criador de avatar por camadas
-- [ ] Fase 54 - Repertorio novo de sinais e frases
 - [ ] Fase 55 - Resultado divertido das votacoes
 
 ## Fases originais
@@ -149,7 +149,7 @@ Criar uma tela com nota de 0 a 100, frases de contexto, anonimato e um botao fin
 
 Aumentar as frases por categorias: clima bom, role parado, after, mudanca de lugar, desconforto, seguranca, logistica e energia do grupo.
 
-Lista atual:
+Lista anterior (substituída na Fase 54; catálogo atual em `signals.js`):
 
 - Divou
 - Ta rendendo
@@ -198,6 +198,19 @@ Revisar seguranca antes de abrir para mais pessoas. Pontos principais:
 - evitar mostrar erros tecnicos para usuarios;
 - revisar permissoes do banco no Supabase;
 - pensar em limite de tentativas e protecao contra spam.
+
+Implementacao local em 05/10/2026:
+
+- configuracao obrigatoria de credenciais e segredo em producao, rejeitando valores de exemplo;
+- limites temporarios de tentativas de login por usuario/IP, IP e usuario;
+- limites de entrada e interacoes, sem substituir a trava de voto existente;
+- token CSRF em todos os formularios POST;
+- renovacao de sessao no login/logout, preservando vinculos de participante;
+- limite de tamanho e parametros dos formularios, rejeicao de campos invalidos e nota vazia;
+- validacao de codigos/identificadores e cabecalhos de seguranca;
+- testes HTTP isolados, sem gravar no banco real.
+
+Pendente para concluir a fase: validar o deploy, cookies HTTPS e IP do proxy no Render; revisar permissoes do banco no Supabase. Os limites e as sessoes ainda ficam em memoria por processo. A fase permanece aberta ate essas verificacoes operacionais. A persistencia de sessoes pertence a Fase 41 e nao foi implementada neste pacote.
 
 ### Fase 25 - Login do criador
 
@@ -877,48 +890,21 @@ Implementado:
 
 ### Fase 54 - Repertorio novo de sinais e frases
 
-Revisar as frases do app para ficarem mais naturais, menos genericas e mais com cara de grupo em role.
+Implementada localmente em 05/10/2026 a pedido do responsável, substituindo todos os sinais selecionáveis anteriores por um repertório direto. Catálogo centralizado em `signals.js`:
 
-Ideias de sinais novos:
+- Chegada: Cheguei agora; Tô chegando; Vou atrasar um pouco; Em 20 minutos eu chego; Cheguei, cadê vocês?
+- Saída: Tô indo embora; Tô indo embora, alguém vem comigo?; Vou embora daqui a pouco; Já cheguei em casa.
+- Ambiente: Tem muita mulher; Tem muito homem; Cheio de noiado; Tá lotado aqui; Tá vazio aqui; A música tá boa; A música tá ruim.
+- Grupo: Cadê o pessoal?; Bora se encontrar?; Quem vai pegar bebida comigo?; Alguém quer comer?; Bora pra outro lugar?; Quem vai pro after?
+- Cuidado: Preciso beber água; Preciso sentar um pouco; Não tô me sentindo bem; Tem alguém me incomodando.
 
-- Divou
-- Paia
-- Deu bom
-- Deu ruim
-- Flopou
-- Salvou o role
-- Ta rendendo
-- Ta estranho
-- Bora pista
-- Bora mesa
-- Bora beber agua
-- Cadê geral?
-- Perdi o bonde
-- Alguem viu meu copo?
-- Precisamos reagrupar
-- Bateu fome
-- Quero sentar
-- Musica salvou
-- DJ ta devendo
-- Fila ta osso
-- Role ta caro
-- Energia subiu
-- Energia caiu
-- After ou cama?
+As perguntas de saída em grupo, encontro, bebida, comida, outro lugar e after abrem enquetes rápidas com respostas diretas. Sugestões de lugar continuam disponíveis em "Bora pra outro lugar?". Comentários curtos aparecem nos sinais de encontro, after e incômodo. O sinal de incômodo mantém anonimato obrigatório e intervalo de comentário.
 
-Ideias por categoria:
+Os sinais continuam opcionais no formulário de avaliação e não alteram a nota do termômetro; enviar apenas um aviso sem nota ainda não é um fluxo separado. O intervalo geral de voto também continua valendo.
 
-- Clima bom: Divou, Deu bom, Ta rendendo, Salvou o role
-- Clima ruim: Paia, Flopou, Ta estranho, Energia caiu
-- Logistica: Cadê geral?, Precisamos reagrupar, Fila ta osso, Bora mesa
-- Cuidado: Bora beber agua, Quero sentar, Ta desconfortavel
-- After: After ou cama?, Onde e o after?, Bora achar after
+Nenhum voto antigo foi apagado ou reescrito. O histórico conserva os textos enviados e as enquetes antigas continuam aceitando suas opções originais. Os sinais anteriores não aparecem para novos envios.
 
-Importante:
-
-- frases continuam sem interferir na nota;
-- evitar termos que possam soar ofensivos ou rotular pessoas;
-- preferir frases curtas que cabem bem no botao.
+Verificadas renderização HTTP, aceitação dos novos sinais, rejeição dos antigos em novos votos, anonimato e sugestões em enquetes novas/antigas, com banco simulado. Pendente publicação no Render e validação visual no celular.
 
 ### Fase 55 - Resultado divertido das votacoes
 

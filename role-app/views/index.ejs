@@ -16,6 +16,7 @@
 
     <section class="card">
       <form action="/roles" method="POST" class="stack">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <label for="nome">Nome do rolê</label>
         <input id="nome" name="nome" type="text" maxlength="100" required placeholder="Ex: Sexta na casa da Ana">
         <button type="submit" class="primary-button">Criar rolê</button>

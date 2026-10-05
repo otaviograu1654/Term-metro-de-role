@@ -82,6 +82,7 @@
     <% if (!participante && !expiration.isExpired) { %>
       <section class="card">
         <form action="/role/<%= role.codigo %>/entrar" method="POST" class="stack">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <label for="nome">Seu nome ou apelido</label>
           <input id="nome" name="nome" type="text" maxlength="60" required placeholder="Ex: Otavio">
           <div class="avatar-picker">
@@ -182,6 +183,7 @@
         </div>
 
         <form action="/role/<%= role.codigo %>/votar" method="POST" id="voteForm">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <div class="score-box">
             <label for="nota">Nota do rolê</label>
             <div class="score-value">
@@ -279,8 +281,9 @@
                   <div class="quick-poll">
                     <% voto.quickPollOptions.forEach(function(opcao) { %>
                       <form action="/role/<%= role.codigo %>/sinal/<%= voto.id %>/responder" method="POST">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                         <input type="hidden" name="resposta" value="<%= opcao %>">
-                        <% if (voto.status === '🗺️ Vamo pra outro lugar' && opcao === 'Bora') { %>
+                        <% if (isPlacePoll(voto.status) && opcao === 'Bora') { %>
                           <input
                             class="suggestion-input"
                             name="sugestao"
@@ -307,6 +310,7 @@
                             <strong><%= sugestao.texto %></strong>
                             <div class="suggestion-actions">
                               <form action="/role/<%= role.codigo %>/sugestao/<%= sugestao.id %>/votar" method="POST">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                 <input type="hidden" name="valor" value="1">
                                 <button
                                   type="submit"
@@ -316,6 +320,7 @@
                                 </button>
                               </form>
                               <form action="/role/<%= role.codigo %>/sugestao/<%= sugestao.id %>/votar" method="POST">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                 <input type="hidden" name="valor" value="-1">
                                 <button
                                   type="submit"

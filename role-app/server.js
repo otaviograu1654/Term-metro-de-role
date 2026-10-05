@@ -5,6 +5,9 @@ const crypto = require('crypto');
 const express = require('express');
 const session = require('express-session');
 const { Pool, types } = require('pg');
+const { validateProductionConfig, securityHeaders, csrfProtection, createRateLimiter, validateForm } = require('./security');
+
+validateProductionConfig(process.env);
 
 types.setTypeParser(1114, (value) => value);
 
@@ -17,62 +20,8 @@ const CREATOR_USERNAME = process.env.CREATOR_USERNAME || 'admin';
 const CREATOR_PASSWORD = process.env.CREATOR_PASSWORD || 'admin123';
 const COMMENT_COOLDOWN_MINUTES = Number(process.env.COMMENT_COOLDOWN_MINUTES || 5);
 
-const STATUS_LIST = [
-  '✨ Divou',
-  '🔥 Tá rendendo',
-  '✅ Rolê entregou',
-  '😎 Clima bom',
-  '😐 Tá meio parado',
-  '📉 Deu uma caída',
-  '🎧 Bora pra pista',
-  '🌀 Vamo rodar',
-  '📍 Bora trocar de canto',
-  '🗺️ Vamo pra outro lugar',
-  '🍺 Vamo pegar bebida',
-  '🥃 Rodada de dose',
-  '🐆 Vamo dar um tapa na pantera',
-  '💸 Bebida tá cara',
-  '🍻 À procura de after',
-  '🌙 Onde é o after?',
-  '🧍 Muito cheio',
-  '⚠️ Tô desconfortável',
-  '👀 Tem uma pessoa me encarando',
-  '🚪 Embora?',
-  '🚶 Quero ir embora',
-  '🚻 Banheiro tá impossível'
-];
-
-const STATUS_CATEGORIES = [
-  { id: 'clima', label: 'Clima', statuses: STATUS_LIST.slice(0, 6) },
-  { id: 'movimento', label: 'Movimento', statuses: STATUS_LIST.slice(6, 10) },
-  { id: 'bar', label: 'Bar', statuses: STATUS_LIST.slice(10, 14) },
-  { id: 'after', label: 'After', statuses: STATUS_LIST.slice(14, 16) },
-  { id: 'cuidado', label: 'Cuidado', statuses: STATUS_LIST.slice(16) }
-];
-
-const SENSITIVE_STATUSES = [
-  '🚶 Quero ir embora',
-  '🚪 Embora?',
-  '⚠️ Tô desconfortável',
-  '👀 Tem uma pessoa me encarando'
-];
-
-const QUICK_POLL_OPTIONS = {
-  '🍺 Vamo pegar bebida': ['Vamo', 'Agora não, irmão'],
-  '🚪 Embora?': ['Vamo', 'Agora não, irmão'],
-  '🌙 Onde é o after?': ['Bora achar', 'Todo mundo ir dormir é o after'],
-  '🗺️ Vamo pra outro lugar': ['Bora', 'Vamo ficar mais']
-};
-
-const COMMENTABLE_STATUSES = [
-  '🍻 À procura de after',
-  '🌙 Onde é o after?',
-  '👀 Tem uma pessoa me encarando'
-];
-
-const FORCE_ANONYMOUS_STATUSES = [
-  '👀 Tem uma pessoa me encarando'
-];
+const { STATUS_LIST, STATUS_CATEGORIES, SENSITIVE_STATUSES, QUICK_POLL_OPTIONS,
+  COMMENTABLE_STATUSES, FORCE_ANONYMOUS_STATUSES, COMMENT_COOLDOWN_STATUSES, isPlacePoll } = require('./signals');
 
 const AVATAR_OPTIONS = [
   { id: 'barbudo', label: 'Avatar 1', image: '/imagens/barbudo.png' },
@@ -108,10 +57,12 @@ const pool = new Pool({
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.set('trust proxy', 1);
+app.disable('x-powered-by');
+app.use(securityHeaders);
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/imagens', express.static(path.join(__dirname, 'imagens')));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false, limit: '16kb', parameterLimit: 30 }));
 app.use(session({
   secret: process.env.SESSION_SECRET || 'dev-secret-change-me',
   resave: false,
@@ -122,6 +73,32 @@ app.use(session({
     secure: process.env.NODE_ENV === 'production'
   }
 }));
+app.use(csrfProtection);
+app.use(validateForm);
+
+const loginMessage = 'Muitas tentativas de login. Aguarde alguns minutos e tente novamente.';
+const loginByIp = createRateLimiter({ limit: 30, windowMs: 15 * 60 * 1000, key: (req) => req.ip, message: loginMessage });
+const loginByUserAndIp = createRateLimiter({ limit: 5, windowMs: 15 * 60 * 1000,
+  key: (req) => `${req.ip}:${(req.body.username || '').trim()}`, message: loginMessage });
+const loginByUser = createRateLimiter({ limit: 50, windowMs: 15 * 60 * 1000,
+  key: (req) => (req.body.username || '').trim(), message: loginMessage });
+const interactionLimit = createRateLimiter({ limit: 60, windowMs: 60 * 1000,
+  key: (req) => req.sessionID, message: 'Muitas interacoes em pouco tempo. Aguarde um minuto.' });
+const entryLimit = createRateLimiter({ limit: 30, windowMs: 60 * 1000,
+  key: (req) => req.ip, message: 'Muitas entradas em pouco tempo. Aguarde um minuto.' });
+app.use('/role', (req, res, next) => req.method === 'POST' ? interactionLimit(req, res, next) : next());
+app.post('/role/:codigo/entrar', entryLimit);
+
+app.param('codigo', (req, res, next, codigo) => {
+  if (!/^[a-z0-9]{1,10}$/i.test(codigo)) return renderError(res, 'Codigo de role invalido.', 400);
+  return next();
+});
+for (const parameter of ['participanteId', 'votoId', 'sugestaoId']) {
+  app.param(parameter, (req, res, next, value) => {
+    if (!/^[1-9]\d*$/.test(value) || !Number.isSafeInteger(Number(value))) return renderError(res, 'Identificador invalido.', 400);
+    return next();
+  });
+}
 
 function query(text, params) {
   return pool.query(text, params);
@@ -393,6 +370,7 @@ function calculateThermometer(votes) {
 }
 
 function normalizeScore(value) {
+  if (typeof value !== 'string' || !/^\d{1,3}$/.test(value.trim())) return null;
   const score = Number(value);
 
   if (!Number.isInteger(score) || score < 0 || score > 100) {
@@ -431,7 +409,7 @@ function normalizeSuggestion(value, status, resposta) {
     return null;
   }
 
-  if (status !== '🗺️ Vamo pra outro lugar' || resposta !== 'Bora') {
+  if (!isPlacePoll(status) || resposta !== 'Bora') {
     return null;
   }
 
@@ -712,21 +690,36 @@ app.get('/login', (req, res) => {
   return res.render('login', { erro: null });
 });
 
-app.post('/login', (req, res) => {
+app.post('/login', loginByIp, loginByUserAndIp, loginByUser, (req, res) => {
   const username = String(req.body.username || '').trim();
   const password = String(req.body.password || '');
 
   if (username === CREATOR_USERNAME && password === CREATOR_PASSWORD) {
-    req.session.creatorLoggedIn = true;
-    return res.redirect('/dashboard');
+    const roles = req.session.roles;
+    return req.session.regenerate((error) => {
+      if (error) return renderError(res, 'Nao foi possivel iniciar sua sessao.', 500);
+      req.session.creatorLoggedIn = true;
+      if (roles) req.session.roles = roles;
+      req.session.save((saveError) => {
+        if (saveError) return renderError(res, 'Nao foi possivel iniciar sua sessao.', 500);
+        return res.redirect('/dashboard');
+      });
+    });
   }
 
   return res.status(401).render('login', { erro: 'Usuario ou senha invalidos.' });
 });
 
 app.post('/logout', (req, res) => {
-  req.session.creatorLoggedIn = false;
-  return res.redirect('/login');
+  const roles = req.session.roles;
+  req.session.regenerate((error) => {
+    if (error) return renderError(res, 'Nao foi possivel encerrar sua sessao.', 500);
+    if (roles) req.session.roles = roles;
+    req.session.save((saveError) => {
+      if (saveError) return renderError(res, 'Nao foi possivel encerrar sua sessao.', 500);
+      return res.redirect('/login');
+    });
+  });
 });
 
 app.get('/dashboard', requireCreator, async (req, res) => {
@@ -906,6 +899,7 @@ app.get('/role/:codigo', async (req, res) => {
       creatorLoggedIn: isCreatorLoggedIn(req),
       aviso: consumeFlash(req),
       statusList: STATUS_LIST,
+      isPlacePoll,
       statusCategories: STATUS_CATEGORIES,
       sensitiveStatuses: SENSITIVE_STATUSES,
       commentableStatuses: COMMENTABLE_STATUSES,
@@ -994,7 +988,7 @@ app.post('/role/:codigo/votar', async (req, res) => {
       return renderError(res, 'Comentario curto so esta disponivel em alguns sinais.');
     }
 
-    if (comentario && status === '👀 Tem uma pessoa me encarando') {
+    if (comentario && COMMENT_COOLDOWN_STATUSES.includes(status)) {
       const latestComment = await getLatestParticipantComment(role.id, participante.participante_id, status);
 
       if (latestComment) {
@@ -1147,6 +1141,16 @@ app.post('/role/:codigo/sugestao/:sugestaoId/votar', async (req, res) => {
 
 app.use((req, res) => {
   renderError(res, 'Pagina nao encontrada.', 404);
+});
+
+app.use((error, req, res, next) => {
+  if (res.headersSent) return next(error);
+  if (error.type === 'entity.too.large' || error.type === 'parameters.too.many') {
+    return renderError(res, 'Formulario muito grande. Reduza os campos e tente novamente.', 413);
+  }
+  if (error.status === 400) return renderError(res, 'Formulario invalido.', 400);
+  console.error('Falha inesperada na requisicao:', error);
+  return renderError(res, 'Nao foi possivel concluir esta operacao.', 500);
 });
 
 if (require.main === module) {

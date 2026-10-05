@@ -15,6 +15,7 @@
         <p class="error-text"><%= erro %></p>
       <% } %>
       <form action="/login" method="POST" class="stack">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <label for="username">Usuario</label>
         <input id="username" name="username" type="text" required autocomplete="username">
         <label for="password">Senha</label>
